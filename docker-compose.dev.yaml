@@ -1,0 +1,29 @@
+version: "3"
+
+# Only for development purposes
+
+services:
+  nginx:
+    volumes:
+      - ./.docker/nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 80:80
+
+  mariadb:
+    image: mariadb:10.10.2
+    volumes:
+      - ./.runtime/mariadb:/var/lib/mysql
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "yes"
+      MARIADB_DATABASE: ${DB_DATABASE}
+    ports:
+      - 3306:3306
+
+  php:
+    command: sh -c "php-fpm"
+
+  queue:
+    depends_on:
+      - mariadb
+    command: sh -c "php artisan queue:work"

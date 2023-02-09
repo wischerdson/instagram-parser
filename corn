@@ -1,0 +1,113 @@
+#!/usr/bin/env bash
+
+set -eu
+
+RED='\033[0;31m'
+CIAN='\033[0;36m'
+PURPLE='\033[0;35m'
+NC='\033[0m'
+
+path=$(dirname "$(realpath $0)")
+
+info_flag=0
+dry_run_flag=0
+
+while [[ "$#" -gt 0 ]]; do
+	case $1 in
+		-i|--info) info_flag=1; shift ;;
+		--dry-run)
+			dry_run_flag=1
+			info_flag=1
+			shift ;;
+		-*|--*)
+			echo "Unknown option $1"
+			exit 1
+		;;
+		*) break ;;
+	esac
+done
+
+# Ensure that there is .env file
+if [ ! -f $path/.env ]; then
+	echo -e "${RED}The .env file is missing, but can be installed with:${NC} \n\n\tcp .env.example .env\n"
+	exit 1
+fi
+
+set -a
+. $path/.env
+set +a
+
+dockerComposeFiles=("docker-compose.yaml")
+
+if [ "$APP_ENV" = "local" ]; then
+	dockerComposeFiles+=("docker-compose.dev.yaml")
+else
+	dockerComposeFiles+=("docker-compose.prod.yaml")
+fi
+
+if [ -f $path/docker-compose.override.yaml ]; then
+	dockerComposeFiles+=("docker-compose.override.yaml")
+fi
+
+initCommand="docker-compose "
+for i in ${dockerComposeFiles[@]}; do
+	initCommand+="-f $path/$i "
+done
+
+if [ $# = 0 ]; then
+	$initCommand
+	exit 0
+fi
+
+command=$1
+shift 1
+
+case $command in
+	"php")
+		runOrExec="exec"
+		if [ -z `docker-compose ps -q php` ] || [ -z `docker ps -q --no-trunc | grep $(docker-compose ps -q php)` ]; then
+			runOrExec="run --rm"
+		fi
+		fullCommand="${initCommand}${runOrExec} php $@"
+	;;
+
+	"artisan" | "art" | "laravel" | "lara")
+		runOrExec="exec"
+		if [ -z `docker-compose ps -q php` ] || [ -z `docker ps -q --no-trunc | grep $(docker-compose ps -q php)` ]; then
+			runOrExec="run --rm"
+		fi
+		fullCommand="${initCommand}${runOrExec} php php /app/artisan $@"
+	;;
+
+	"composer")
+		runOrExec="exec"
+		if [ -z `docker-compose ps -q php` ] || [ -z `docker ps -q --no-trunc | grep $(docker-compose ps -q php)` ]; then
+			runOrExec="run --rm"
+		fi
+		fullCommand="${initCommand}${runOrExec} php composer $@"
+	;;
+
+	"npm")
+		runOrExec="exec"
+		if [ -z `docker-compose ps -q nodejs` ] || [ -z `docker ps -q --no-trunc | grep $(docker-compose ps -q nodejs)` ]; then
+			runOrExec="run --rm"
+		fi
+		fullCommand="${initCommand}${runOrExec} nodejs npm $@"
+	;;
+
+	"ngrok")
+		fullCommand="${initCommand}run ngrok http host.docker.internal:80 --region=eu"
+	;;
+
+	*)
+		fullCommand="${initCommand}${command} $@"
+	;;
+esac
+
+if [ $info_flag = 1 ]; then
+	echo -e "${PURPLE}${fullCommand}${NC}\n"
+fi
+
+if [ $dry_run_flag = 0 ]; then
+	$fullCommand
+fi

@@ -8,7 +8,7 @@ class Cookie
 {
 	private array $cookie;
 
-	public function __construct(array $cookie)
+	public function __construct(array $cookie = [])
 	{
 		$this->cookie = $cookie;
 	}
@@ -30,6 +30,11 @@ class Cookie
 		}, []);
 
 		return new self($cookie);
+	}
+
+	public function add(string $name, string $value): void
+	{
+		$this->cookie[$name] = $value;
 	}
 
 	public function toArray(): array

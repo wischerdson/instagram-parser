@@ -12,6 +12,7 @@ class Headers
 
 	public function __construct(array $headers, ?Cookie $cookie)
 	{
+		unset($headers['cookie']);
 		$this->headers = $headers;
 		$this->cookie = $cookie;
 	}

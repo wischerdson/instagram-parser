@@ -2,9 +2,6 @@
 
 namespace App\Services\Instagram\Requests;
 
-use App\Services\Instagram\Responses\FollowersResponse;
-use Illuminate\Http\Client\Response;
-
 class FollowersRequest extends Request
 {
 	public string | int $userPk;
@@ -20,17 +17,22 @@ class FollowersRequest extends Request
 		return "https://www.instagram.com/api/v1/friendships/{$this->userPk}/followers/";
 	}
 
-	public function getQuery(): array
+	public function getMethod(): string
 	{
-		return [
-			'count' => $this->count,
-			'max_id' => $this->maxId,
-			'search_surface' => $this->searchSurface
-		];
+		return 'GET';
 	}
 
-	public function getResponseInstance(Response $httpResponse): FollowersResponse
+	public function getQuery(): array
 	{
-		return new FollowersResponse($httpResponse);
+		$out = [
+			'count' => $this->count,
+			'search_surface' => $this->searchSurface
+		];
+
+		if ($this->maxId) {
+			$out['max_id'] = $this->maxId;
+		}
+
+		return $out;
 	}
 }

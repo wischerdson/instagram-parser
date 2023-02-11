@@ -2,9 +2,6 @@
 
 namespace App\Services\Instagram\Requests;
 
-use App\Services\Instagram\Responses\FollowersResponse;
-use Illuminate\Http\Client\Response;
-
 class UserInfoRequest extends Request
 {
 	public string | int $userPk;
@@ -14,8 +11,8 @@ class UserInfoRequest extends Request
 		return "https://www.instagram.com/api/v1/users/{$this->userPk}/info/";
 	}
 
-	public function getResponseInstance(Response $httpResponse): FollowersResponse
+	public function getMethod(): string
 	{
-		return new FollowersResponse($httpResponse);
+		return 'GET';
 	}
 }

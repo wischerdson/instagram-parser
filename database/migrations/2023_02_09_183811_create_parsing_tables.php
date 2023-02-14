@@ -25,38 +25,26 @@ return new class extends Migration
 
 		Schema::create('tasks', function (Blueprint $table) {
 			$table->id();
-			$table->bigInteger('taskable_id')->unsigned();
-			$table->string('taskable_type');
+			$table->text('serialized_request_object');
+			$table->string('type');
+			$table->bigInteger('result_id')->unsigned()->nullable();
 			$table->enum('status', ['unprocessed', 'in_process', 'processed', 'failed']);
 			$table->timestamp('created_at')->useCurrent();
 			$table->timestamp('processed_at')->nullable();
 		});
 
-		Schema::create('fetch_followers_tasks', function (Blueprint $table) {
+		Schema::create('followers_fetching_results', function (Blueprint $table) {
 			$table->id();
-			$table->string('pk');
-			$table->string('next_max_id');
-		});
-
-		Schema::create('fetched_followers_task_results', function (Blueprint $table) {
-			$table->id();
-			$table->foreignId('task_id')->constrained('tasks')->cascadeOnDelete();
-			$table->string('pk');
-			$table->string('username');
-			$table->string('full_name');
+			$table->string('pk')->unique();
+			$table->string('username')->unique();
+			$table->string('full_name')->nullable();
 			$table->boolean('is_private');
 			$table->boolean('is_verified');
-			$table->string('profile_pic_url');
+			$table->string('profile_pic_url')->nullable();
 		});
 
-		Schema::create('fetch_user_info_tasks', function (Blueprint $table) {
+		Schema::create('user_info_fetching_results', function (Blueprint $table) {
 			$table->id();
-			$table->string('pk');
-		});
-
-		Schema::create('fetched_user_info_task_results', function (Blueprint $table) {
-			$table->id();
-			$table->foreignId('task_id')->constrained('tasks')->cascadeOnDelete();
 			$table->string('pk')->unique();
 			$table->string('username')->unique();
 			$table->string('full_name')->nullable();
@@ -85,7 +73,7 @@ return new class extends Migration
 			$table->text('headers')->nullable();
 			$table->text('response_headers');
 			$table->text('response_body');
-			$table->text('response_status');
+			$table->smallInteger('http_code')->unsigned();
 			$table->timestamp('created_at');
 		});
 	}
@@ -98,10 +86,8 @@ return new class extends Migration
 	public function down()
 	{
 		Schema::dropIfExists('requests_details');
-		Schema::dropIfExists('fetched_user_info_results');
-		Schema::dropIfExists('fetch_user_info_tasks');
 		Schema::dropIfExists('fetched_followers_task_results');
-		Schema::dropIfExists('fetch_followers_tasks');
+		Schema::dropIfExists('followers_fetching_results');
 		Schema::dropIfExists('tasks');
 		Schema::dropIfExists('workers');
 	}

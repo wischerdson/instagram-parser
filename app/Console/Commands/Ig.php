@@ -49,9 +49,18 @@ x-ig-www-claim: hmac.AR25gmKCyS9QSRR81NkrYvcmzP36fyWKmhBnQ4mgmiMh80tL
 x-requested-with: XMLHttpRequest
 END;
 
-		$response = InstagramFacade::getUserInfo('36985831116', $rawHeaders);
 
-		dd($response->user);
+
+		// $response = InstagramFacade::getUserInfo('36985831116', $rawHeaders);
+
+		$headers = Headers::parse($rawHeaders);
+
+		$request = new FollowersRequest();
+		// $request->authorize($headers);
+		$request->userPk = '123';
+		$request->maxId = '200';
+
+		dd(unserialize(serialize($request)));
 
 
 		// $headers = Headers::parse($rawHeaders);

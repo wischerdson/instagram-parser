@@ -25,12 +25,25 @@ return new class extends Migration
 
 		Schema::create('tasks', function (Blueprint $table) {
 			$table->id();
-			$table->text('serialized_request_object');
 			$table->string('type');
+			$table->string('request_type');
+			$table->string('request_id');
+			$table->string('result_type')->nullable();
 			$table->bigInteger('result_id')->unsigned()->nullable();
 			$table->enum('status', ['unprocessed', 'in_process', 'processed', 'failed']);
 			$table->timestamp('created_at')->useCurrent();
 			$table->timestamp('processed_at')->nullable();
+		});
+
+		Schema::create('followers_fetching_requests', function (Blueprint $table) {
+			$table->id();
+			$table->string('max_id')->nullable();
+			$table->string('user_pk');
+		});
+
+		Schema::create('user_info_fetching_requests', function (Blueprint $table) {
+			$table->id();
+			$table->string('user_pk');
 		});
 
 		Schema::create('followers_fetching_results', function (Blueprint $table) {
@@ -86,8 +99,10 @@ return new class extends Migration
 	public function down()
 	{
 		Schema::dropIfExists('requests_details');
-		Schema::dropIfExists('fetched_followers_task_results');
+		Schema::dropIfExists('user_info_fetching_results');
 		Schema::dropIfExists('followers_fetching_results');
+		Schema::dropIfExists('user_info_fetching_requests');
+		Schema::dropIfExists('followers_fetching_requests');
 		Schema::dropIfExists('tasks');
 		Schema::dropIfExists('workers');
 	}

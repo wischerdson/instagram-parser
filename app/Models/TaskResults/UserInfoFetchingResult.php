@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\TaskResult;
+namespace App\Models\TaskResults;
 
 use App\Models\Task;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -33,6 +33,6 @@ class UserInfoFetchingResult extends Model
 
 	public function task(): MorphOne
 	{
-		return $this->morphOne(Task::class, 'resultable', 'type', 'result_id');
+		return $this->morphOne(Task::class, 'result', 'result_type', 'result_id');
 	}
 }

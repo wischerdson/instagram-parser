@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Services\Instagram\Requests\Request;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -12,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property int $id
  * @property string $serialized_request_object
  * @property string $type
+ * @property string $result_type
  * @property int $result_id
  * @property string $status
  * @property string $created_at
@@ -21,16 +20,31 @@ class Task extends Model
 {
 	use HasFactory;
 
-	public function resultable(): MorphTo
+	const UPDATED_AT = null;
+
+	const TYPE_FOLLOWERS_FETCHING = 'followers_fetching';
+
+	const TYPE_USER_INFO_FETCHING = 'user_info_fetching';
+
+	/** Установить тип задачи - извлечение списка подписчиков */
+	public function setFollowerFetchingType(): void
 	{
-		return $this->morphTo(type: 'type', id: 'result_id');
+		$this->type = self::TYPE_FOLLOWERS_FETCHING;
 	}
 
-	protected function request(): Attribute
+	/** Установить тип задача - получение детально информации об instagram-пользователе */
+	public function setUserInfoFetchingType(): void
 	{
-		return Attribute::make(
-			get: fn ($_, $attrs): Request => unserialize($attrs['serialized_request_object']),
-			set: fn (Request $request) => ['serialized_request_object' => serialize($request)]
-		);
+		$this->type = self::TYPE_USER_INFO_FETCHING;
+	}
+
+	public function result(): MorphTo
+	{
+		return $this->morphTo(type: 'result_type', id: 'result_id');
+	}
+
+	public function request(): MorphTo
+	{
+		return $this->morphTo(type: 'request_type', id: 'request_id');
 	}
 }

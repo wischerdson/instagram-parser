@@ -10,3 +10,4 @@ Route::post('workers', [WorkerController::class, 'updateOrCreate']);
 Route::delete('workers', [WorkerController::class, 'delete']);
 
 Route::get('tasks', [TaskController::class, 'index']);
+Route::post('tasks', [TaskController::class, 'create']);

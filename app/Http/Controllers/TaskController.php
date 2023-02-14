@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Task\FetchFollowersTask;
+use App\Models\Task;
+use App\Models\TaskRequests\FollowersFetchingRequest;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -16,10 +17,15 @@ class TaskController extends Controller
 	{
 		$pk = $request->pk;
 
-		if (FetchFollowersTask::where('pk', $pk)->exists()) {
-			return redirect()->back();
-		}
+		$igRequest = new FollowersFetchingRequest();
+		$igRequest->user_pk = $pk;
+		$igRequest->save();
 
-		$task = FetchFollowersTask::firstOrUpdate(['pk' => $pk], ['pk' => $pk]);
+		$task = new Task();
+		$task->setFollowerFetchingType();
+
+		$igRequest->task()->save($task);
+
+		return redirect()->back();
 	}
 }

@@ -42,7 +42,7 @@
 						<td class="max-w-xs overflow-auto"><pre class="text-xs">{{ $worker->headers }}</pre></td>
 						<td>ok</td>
 						<td>
-							<form action="/worker" method="POST">
+							<form action="/workers" method="POST">
 								@method('DELETE')
 								@csrf
 								<button class="btn btn-sm btn-danger" name="id" value="{{ $worker->id }}">Delete</button>

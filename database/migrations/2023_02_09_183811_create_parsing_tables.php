@@ -17,8 +17,9 @@ return new class extends Migration
 			$table->id();
 			$table->string('login')->unique();
 			$table->string('password');
-			$table->text('headers');
+			$table->text('headers')->nullable();
 			$table->string('status')->default('waiting');
+			$table->timestamp('last_request_at')->nullable();
 			$table->timestamp('sleeps_until')->nullable();
 			$table->timestamp('created_at')->useCurrent();
 		});

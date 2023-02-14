@@ -16,9 +16,18 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Worker extends Model
 {
-    use HasFactory;
+	use HasFactory;
 
-    const UPDATED_AT = null;
+	const UPDATED_AT = null;
 
-    protected $fillable = ['login', 'password', 'headers'];
+	/** Воркер готов к работе */
+	const STATUS_READY_TO_WORK = 'ready_to_work';
+
+	/** Воркер что-то обрабатывает */
+	const STATUS_BUSY = 'busy';
+
+	/** Последний запрос вернул ошибку */
+	const STATUS_INACTIVE = 'inactive';
+
+	protected $fillable = ['login', 'password', 'headers'];
 }

@@ -54,7 +54,7 @@ return new class extends Migration
 			$table->string('pk');
 		});
 
-		Schema::create('fetched_user_info_results', function (Blueprint $table) {
+		Schema::create('fetched_user_info_task_results', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('task_id')->constrained('tasks')->cascadeOnDelete();
 			$table->string('pk')->unique();

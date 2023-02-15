@@ -77,7 +77,7 @@ return new class extends Migration
 			$table->timestamp('created_at')->useCurrent();
 		});
 
-		Schema::create('requests_details', function (Blueprint $table) {
+		Schema::create('requests_logs', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('worker_id')->nullable()->constrained('workers')->nullOnDelete();
 			$table->foreignId('task_id')->constrained('tasks')->cascadeOnDelete();
@@ -100,7 +100,7 @@ return new class extends Migration
 	 */
 	public function down()
 	{
-		Schema::dropIfExists('requests_details');
+		Schema::dropIfExists('requests_logs');
 		Schema::dropIfExists('user_info_fetching_results');
 		Schema::dropIfExists('followers_fetching_results');
 		Schema::dropIfExists('user_info_fetching_requests');

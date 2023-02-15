@@ -44,6 +44,12 @@ class Worker extends Model
 		return $this->hasMany(Task::class, 'worker_id');
 	}
 
+	public function deactivate(): void
+	{
+		$this->status = self::STATUS_INACTIVE;
+		$this->save();
+	}
+
 	public function currentTask(): HasOne
 	{
 		return $this->hasOne(Task::class, 'worker_id')->ofMany(aggregate: function (Builder $query) {

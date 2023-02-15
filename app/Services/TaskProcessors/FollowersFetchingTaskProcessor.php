@@ -26,4 +26,9 @@ class FollowersFetchingTaskProcessor extends TaskProcessor
 	{
 		return new FollowersResponse($client->send($request));
 	}
+
+	protected function createResult(Response $response): void
+	{
+
+	}
 }

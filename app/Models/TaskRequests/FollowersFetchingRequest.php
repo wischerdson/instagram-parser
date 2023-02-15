@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  * @property string $max_id
  * @property string $user_pk
  */
-class FollowersFetchingRequest extends Model
+class FollowersFetchingRequest extends Model implements IRequest
 {
 	use HasFactory;
 

@@ -18,7 +18,7 @@ return new class extends Migration
 			$table->string('login')->unique();
 			$table->string('password');
 			$table->text('headers')->nullable();
-			$table->string('status')->default('waiting');
+			$table->enum('status', ['ready_to_work', 'busy', 'inactive']);
 			$table->timestamp('last_request_at')->nullable();
 			$table->timestamp('sleeps_until')->nullable();
 			$table->timestamp('created_at')->useCurrent();
@@ -32,6 +32,7 @@ return new class extends Migration
 			$table->string('result_type')->nullable();
 			$table->bigInteger('result_id')->unsigned()->nullable();
 			$table->enum('status', ['unprocessed', 'in_process', 'processed', 'failed']);
+			$table->foreignId('worker_id')->nullable()->constrained('workers')->nullOnDelete();
 			$table->timestamp('created_at')->useCurrent();
 			$table->timestamp('processed_at')->nullable();
 		});

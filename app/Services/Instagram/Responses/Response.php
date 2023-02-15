@@ -3,7 +3,6 @@
 namespace App\Services\Instagram\Responses;
 
 use App\Services\Instagram\Cookie;
-use App\Services\Instagram\Models\Model;
 use Illuminate\Http\Client\Response as HttpResponse;
 
 abstract class Response
@@ -19,16 +18,9 @@ abstract class Response
 		}
 	}
 
-	abstract protected function fill(array $data): void;
-
 	public function isSomethingWrong(): bool
 	{
 		return $this->httpResponse->failed();
-	}
-
-	public function getModel(): ?Model
-	{
-		return null;
 	}
 
 	/**
@@ -46,4 +38,6 @@ abstract class Response
 
 		return $cookie;
 	}
+
+	abstract protected function fill(array $responseData): void;
 }

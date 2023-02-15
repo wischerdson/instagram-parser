@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property int $id
@@ -30,4 +33,21 @@ class Worker extends Model
 	const STATUS_INACTIVE = 'inactive';
 
 	protected $fillable = ['login', 'password', 'headers'];
+
+	public function scopeFree(Builder $query): void
+	{
+		$query->where('status', self::STATUS_READY_TO_WORK);
+	}
+
+	public function tasks(): HasMany
+	{
+		return $this->hasMany(Task::class, 'worker_id');
+	}
+
+	public function currentTask(): HasOne
+	{
+		return $this->hasOne(Task::class, 'worker_id')->ofMany(aggregate: function (Builder $query) {
+			$query->where('status', Task::STATUS_IN_PROCESS);
+		});
+	}
 }

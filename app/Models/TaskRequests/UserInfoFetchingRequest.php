@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  * @property int $id
  * @property string $user_pk
  */
-class UserInfoFetchingRequest extends Model
+class UserInfoFetchingRequest extends Model implements IRequest
 {
 	use HasFactory;
 

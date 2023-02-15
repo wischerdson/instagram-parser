@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\TasksDispatcher;
 use Illuminate\Console\Command;
 
 class Ig extends Command
@@ -20,7 +21,7 @@ class Ig extends Command
 	 */
 	public function handle()
 	{
-
+		TasksDispatcher::assignWork();
 
 		return Command::SUCCESS;
 	}

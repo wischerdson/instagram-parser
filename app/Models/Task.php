@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
@@ -26,6 +28,14 @@ class Task extends Model
 
 	const TYPE_USER_INFO_FETCHING = 'user_info_fetching';
 
+	const STATUS_UNPROCESSED = 'unprocessed';
+
+	const STATUS_IN_PROCESS = 'in_process';
+
+	const STATUS_PROCESSED = 'processed';
+
+	const STATUS_FAILED = 'failed';
+
 	/** Установить тип задачи - извлечение списка подписчиков */
 	public function setFollowerFetchingType(): void
 	{
@@ -38,6 +48,11 @@ class Task extends Model
 		$this->type = self::TYPE_USER_INFO_FETCHING;
 	}
 
+	public function setInProcessStatus(): void
+	{
+		$this->status = self::STATUS_IN_PROCESS;
+	}
+
 	public function result(): MorphTo
 	{
 		return $this->morphTo(type: 'result_type', id: 'result_id');
@@ -46,5 +61,15 @@ class Task extends Model
 	public function request(): MorphTo
 	{
 		return $this->morphTo(type: 'request_type', id: 'request_id');
+	}
+
+	public function scopeUnprocessed(Builder $query): void
+	{
+		$query->where('status', self::STATUS_UNPROCESSED);
+	}
+
+	public function worker(): BelongsTo
+	{
+		return $this->belongsTo(Worker::class, 'worker_id');
 	}
 }

@@ -20,7 +20,7 @@ class TasksDispatcher
 			$worker = $freeWorkers[$idx];
 
 			$task->worker()->associate($worker);
-			$task->setInProcessStatus();
+			// $task->setInProcessStatus();
 			$task->save();
 
 			ProcessTask::dispatch($task);

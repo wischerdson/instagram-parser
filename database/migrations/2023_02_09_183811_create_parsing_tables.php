@@ -48,16 +48,6 @@ return new class extends Migration
 			$table->string('user_pk');
 		});
 
-		Schema::create('followers_fetching_results', function (Blueprint $table) {
-			$table->id();
-			$table->string('pk')->unique();
-			$table->string('username')->unique();
-			$table->string('full_name')->nullable();
-			$table->boolean('is_private');
-			$table->boolean('is_verified');
-			$table->string('profile_pic_url')->nullable();
-		});
-
 		Schema::create('user_info_fetching_results', function (Blueprint $table) {
 			$table->id();
 			$table->string('pk')->unique();
@@ -84,7 +74,7 @@ return new class extends Migration
 			$table->string('url');
 			$table->string('method', 10);
 			$table->text('query')->nullable();
-			$table->text('body')->nullable();
+			$table->mediumText('body')->nullable();
 			$table->text('headers')->nullable();
 			$table->text('response_headers');
 			$table->text('response_body');
@@ -102,7 +92,6 @@ return new class extends Migration
 	{
 		Schema::dropIfExists('requests_logs');
 		Schema::dropIfExists('user_info_fetching_results');
-		Schema::dropIfExists('followers_fetching_results');
 		Schema::dropIfExists('user_info_fetching_requests');
 		Schema::dropIfExists('followers_fetching_requests');
 		Schema::dropIfExists('tasks');

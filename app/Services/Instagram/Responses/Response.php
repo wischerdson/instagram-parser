@@ -20,7 +20,7 @@ abstract class Response
 
 	public function isSomethingWrong(): bool
 	{
-		return $this->httpResponse->failed();
+		return $this->httpResponse->failed() || !$this->httpResponse->json();
 	}
 
 	/**

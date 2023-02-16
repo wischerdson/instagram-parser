@@ -27,6 +27,8 @@ class RequestLog extends Model
 
 	protected $table = 'requests_logs';
 
+	const UPDATED_AT = null;
+
 	public function worker(): BelongsTo
 	{
 		return $this->belongsTo(Worker::class, 'worker_id');
@@ -53,7 +55,7 @@ class RequestLog extends Model
 		);
 	}
 
-	protected function reponseHeaders(): Attribute
+	protected function responseHeaders(): Attribute
 	{
 		return Attribute::make(
 			get: fn (string $value) => json_decode($value),

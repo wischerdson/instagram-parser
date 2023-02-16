@@ -19,6 +19,8 @@ abstract class TaskProcessor
 
 	protected IRequest $requestData;
 
+	protected Response $response;
+
 	public function __construct(Task $task)
 	{
 		$this->task = $task;
@@ -32,11 +34,11 @@ abstract class TaskProcessor
 		$headers = Headers::parse($this->worker->headers);
 		$request->authorize($headers);
 
-		$response = $this->createIgResponse(new Client(), $request);
+		$this->setIgResponse(new Client(), $request);
 
-		$this->logRequest($request, $response);
+		$this->logRequest($request, $this->response);
 
-		if ($response->isSomethingWrong()) {
+		if ($this->response->isSomethingWrong()) {
 			$this->task->setFailedStatus();
 			$this->task->save();
 
@@ -45,7 +47,7 @@ abstract class TaskProcessor
 			return false;
 		}
 
-		$this->createResult($response);
+		$this->createResult($this->response);
 
 		return true;
 	}
@@ -68,7 +70,7 @@ abstract class TaskProcessor
 
 	abstract protected function createIgRequest(): Request;
 
-	abstract protected function createIgResponse(Client $client, Request $request): Response;
+	abstract protected function setIgResponse(Client $client, Request $request): void;
 
-	abstract protected function createResult(Response $response): void;
+	abstract protected function createResult(): void;
 }

@@ -6,7 +6,7 @@ class FollowersRequest extends Request
 {
 	public string | int $userPk;
 
-	public string $maxId = '';
+	public ?string $maxId;
 
 	public int $count = 200;
 

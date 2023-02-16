@@ -56,7 +56,7 @@ class Headers
 	 */
 	public function toArray(): array
 	{
-		$cookie = $this->cookie->isNotEmpty() ? ['Cookie' => $this->cookie->toString()] : [];
+		$cookie = ($this->cookie && $this->cookie->isNotEmpty()) ? ['Cookie' => $this->cookie->toString()] : [];
 
 		return array_merge($this->headers, $cookie);
 	}

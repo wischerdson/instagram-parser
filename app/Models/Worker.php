@@ -32,6 +32,8 @@ class Worker extends Model
 	/** Последний запрос вернул ошибку */
 	const STATUS_INACTIVE = 'inactive';
 
+	protected $table = 'workers';
+
 	protected $fillable = ['login', 'password', 'headers'];
 
 	public function scopeFree(Builder $query): void

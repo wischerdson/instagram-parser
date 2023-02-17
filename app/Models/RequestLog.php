@@ -25,9 +25,9 @@ class RequestLog extends Model
 {
 	use HasFactory;
 
-	protected $table = 'requests_logs';
-
 	const UPDATED_AT = null;
+
+	protected $table = 'requests_logs';
 
 	public function worker(): BelongsTo
 	{

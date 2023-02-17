@@ -29,7 +29,7 @@ class TasksDispatcher
 
 	private function findTasks(int $count): Collection
 	{
-		return Task::unprocessed()->with('request')->inRandomOrder()->limit($count)->get();
+		return Task::unprocessed()->with('inputData')->inRandomOrder()->limit($count)->get();
 	}
 
 	private function findFreeWorkers(): Collection

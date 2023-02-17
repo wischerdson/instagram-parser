@@ -1,24 +1,26 @@
 <?php
 
-namespace App\Models\TaskRequests;
+namespace App\Models;
 
-use App\Models\Task;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 /**
  * @property int $id
+ * @property string $max_id
  * @property string $user_pk
  */
-class UserInfoFetchingRequest extends Model implements IRequest
+class TaskInputForFollowersFetching extends Model
 {
 	use HasFactory;
 
 	public $timestamps = false;
 
+	protected $table = 'task_input_for_followers_fetching';
+
 	public function task(): MorphOne
 	{
-		return $this->morphOne(Task::class, 'request', 'request_type', 'request_id');
+		return $this->morphOne(Task::class, 'input_data');
 	}
 }

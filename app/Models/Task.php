@@ -37,6 +37,8 @@ class Task extends Model
 
 	const STATUS_FAILED = 'failed';
 
+	protected $table = 'tasks';
+
 	/** Установить тип задачи - извлечение списка подписчиков */
 	public function setFollowerFetchingType(): void
 	{
@@ -64,14 +66,9 @@ class Task extends Model
 		return $this->morphTo(type: 'result_type', id: 'result_id');
 	}
 
-	public function request(): MorphTo
+	public function inputData(): MorphTo
 	{
-		return $this->morphTo(type: 'request_type', id: 'request_id');
-	}
-
-	public function scopeUnprocessed(Builder $query): void
-	{
-		$query->where('status', self::STATUS_UNPROCESSED);
+		return $this->morphTo(type: 'input_data_type', id: 'input_data_id');
 	}
 
 	public function worker(): BelongsTo
@@ -82,5 +79,10 @@ class Task extends Model
 	public function logs(): HasMany
 	{
 		return $this->hasMany(RequestLog::class, 'task_id');
+	}
+
+	public function scopeUnprocessed(Builder $query): void
+	{
+		$query->where('status', self::STATUS_UNPROCESSED);
 	}
 }

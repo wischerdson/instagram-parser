@@ -27,8 +27,8 @@ return new class extends Migration
 		Schema::create('tasks', function (Blueprint $table) {
 			$table->id();
 			$table->string('type');
-			$table->string('request_type');
-			$table->string('request_id');
+			$table->string('input_data_type');
+			$table->string('input_data_id');
 			$table->string('result_type')->nullable();
 			$table->bigInteger('result_id')->unsigned()->nullable();
 			$table->enum('status', ['unprocessed', 'in_process', 'processed', 'failed']);
@@ -37,18 +37,40 @@ return new class extends Migration
 			$table->timestamp('processed_at')->nullable();
 		});
 
-		Schema::create('followers_fetching_requests', function (Blueprint $table) {
+		Schema::create('task_input_for_followers_fetching', function (Blueprint $table) {
 			$table->id();
 			$table->string('max_id')->nullable();
 			$table->string('user_pk');
 		});
 
-		Schema::create('user_info_fetching_requests', function (Blueprint $table) {
+		Schema::create('task_results_of_followers_fetching', function (Blueprint $table) {
+			$table->id();
+			$table->boolean('big_list')->nullable();
+			$table->smallInteger('page_size')->unsigned()->nullable();
+			$table->string('next_max_id')->nullable();
+			$table->boolean('has_more')->nullable();
+			$table->boolean('should_limit_list_of_followers')->nullable();
+			$table->string('status');
+			$table->timestamp('created_at')->useCurrent();
+		});
+
+		Schema::create('task_input_for_user_info_fetching', function (Blueprint $table) {
 			$table->id();
 			$table->string('user_pk');
 		});
 
-		Schema::create('user_info_fetching_results', function (Blueprint $table) {
+		Schema::create('followers', function (Blueprint $table) {
+			$table->id();
+			$table->foreignId('result_id')->constrained('task_results_of_followers_fetching')->cascadeOnDelete();
+			$table->string('pk')->unique();
+			$table->string('username')->unique();
+			$table->string('full_name')->nullable();
+			$table->boolean('is_private');
+			$table->boolean('is_verified');
+			$table->string('profile_pic_url')->nullable();
+		});
+
+		Schema::create('users', function (Blueprint $table) {
 			$table->id();
 			$table->string('pk')->unique();
 			$table->string('username')->unique();
@@ -74,7 +96,7 @@ return new class extends Migration
 			$table->string('url');
 			$table->string('method', 10);
 			$table->text('query')->nullable();
-			$table->mediumText('body')->nullable();
+			$table->text('body')->nullable();
 			$table->text('headers')->nullable();
 			$table->text('response_headers');
 			$table->text('response_body');
@@ -91,9 +113,11 @@ return new class extends Migration
 	public function down()
 	{
 		Schema::dropIfExists('requests_logs');
-		Schema::dropIfExists('user_info_fetching_results');
-		Schema::dropIfExists('user_info_fetching_requests');
-		Schema::dropIfExists('followers_fetching_requests');
+		Schema::dropIfExists('users');
+		Schema::dropIfExists('followers');
+		Schema::dropIfExists('task_input_for_user_info_fetching');
+		Schema::dropIfExists('task_results_of_followers_fetching');
+		Schema::dropIfExists('task_input_for_followers_fetching');
 		Schema::dropIfExists('tasks');
 		Schema::dropIfExists('workers');
 	}

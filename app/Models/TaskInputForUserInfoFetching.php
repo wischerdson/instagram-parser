@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Contracts\TaskInputData;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  * @property int $id
  * @property string $user_pk
  */
-class TaskInputForUserInfoFetching extends Model
+class TaskInputForUserInfoFetching extends Model implements TaskInputData
 {
 	use HasFactory;
 

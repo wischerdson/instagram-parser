@@ -50,8 +50,8 @@ class RequestLog extends Model
 	protected function body(): Attribute
 	{
 		return Attribute::make(
-			get: fn (string $value) => unserialize($value),
-			set: fn (mixed $value) => serialize($value)
+			get: fn (string $value) => $value ? unserialize($value) : null,
+			set: fn (mixed $value) => $value ? serialize($value) : null
 		);
 	}
 
@@ -60,6 +60,13 @@ class RequestLog extends Model
 		return Attribute::make(
 			get: fn (string $value) => json_decode($value),
 			set: fn (mixed $value) => json_encode($value)
+		);
+	}
+
+	protected function responseBody(): Attribute
+	{
+		return Attribute::make(
+			set: fn (mixed $value) => substr($value, 0, min(mb_strlen($value, 'ascii'), 64*1024 - 1))
 		);
 	}
 }

@@ -7,9 +7,9 @@ use Illuminate\Http\Client\Response as HttpResponse;
 
 abstract class Response
 {
-	public readonly HttpResponse $httpResponse;
+	public readonly ?HttpResponse $httpResponse;
 
-	public function __construct(HttpResponse $httpResponse)
+	public function __construct(?HttpResponse $httpResponse)
 	{
 		$this->httpResponse = $httpResponse;
 
@@ -20,7 +20,7 @@ abstract class Response
 
 	public function isSomethingWrong(): bool
 	{
-		return $this->httpResponse->failed() || !$this->httpResponse->json();
+		return !$this->httpResponse || $this->httpResponse->failed() || !$this->httpResponse->json();
 	}
 
 	/**

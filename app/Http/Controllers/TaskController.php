@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Models\TaskInputForFollowersFetching;
 use App\Models\TaskRequests\FollowersFetchingRequest;
 use Illuminate\Http\Request;
 
@@ -17,14 +18,14 @@ class TaskController extends Controller
 	{
 		$pk = $request->pk;
 
-		$igRequest = new FollowersFetchingRequest();
-		$igRequest->user_pk = $pk;
-		$igRequest->save();
+		$inputData = new TaskInputForFollowersFetching();
+		$inputData->user_pk = $pk;
+		$inputData->save();
 
 		$task = new Task();
 		$task->setFollowerFetchingType();
 
-		$igRequest->task()->save($task);
+		$inputData->task()->save($task);
 
 		return redirect()->back();
 	}

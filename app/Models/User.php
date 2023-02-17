@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Contracts\TaskResult;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -24,7 +25,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  * @property bool $is_business
  * @property string $created_at
  */
-class User extends Model
+class User extends Model implements TaskResult
 {
 	use HasFactory;
 

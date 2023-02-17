@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Contracts\TaskResult;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -17,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  * @property int $status
  * @property string $created_at
  */
-class TaskResultsOfFollowersFetching extends Model
+class TaskResultsOfFollowersFetching extends Model implements TaskResult
 {
 	use HasFactory;
 

@@ -4,7 +4,6 @@ namespace App\Services\TaskProcessors;
 
 use App\Models\RequestLog;
 use App\Models\Task;
-use App\Models\TaskRequests\IRequest;
 use App\Models\Worker;
 use App\Services\Instagram\Client;
 use App\Services\Instagram\Headers;
@@ -17,28 +16,23 @@ abstract class TaskProcessor
 
 	protected Worker $worker;
 
-	protected IRequest $requestData;
-
-	protected Response $response;
-
 	public function __construct(Task $task)
 	{
 		$this->task = $task;
 		$this->worker = $task->worker;
-		$this->requestData = $task->request;
 	}
 
 	public function run(): bool
 	{
-		$request = $this->createIgRequest();
+		$request = $this->getRequest();
 		$headers = Headers::parse($this->worker->headers);
 		$request->authorize($headers);
 
-		$this->setIgResponse(new Client(), $request);
+		$response = $this->createResponse(new Client());
 
-		$this->logRequest($request, $this->response);
+		$this->logRequest($request, $response);
 
-		if ($this->response->isSomethingWrong()) {
+		if ($response->isSomethingWrong()) {
 			$this->task->setFailedStatus();
 			$this->task->save();
 
@@ -47,13 +41,17 @@ abstract class TaskProcessor
 			return false;
 		}
 
-		$this->createResult($this->response);
+		$this->saveResult();
 
 		return true;
 	}
 
 	private function logRequest(Request $request, Response $response): void
 	{
+		if (!$response->httpResponse) {
+			return;
+		}
+
 		$log = new RequestLog();
 		$log->worker_id = $this->worker->id;
 		$log->url = $request->getUrl();
@@ -68,9 +66,9 @@ abstract class TaskProcessor
 		$this->task->logs()->save($log);
 	}
 
-	abstract protected function createIgRequest(): Request;
+	abstract protected function getRequest(): Request;
 
-	abstract protected function setIgResponse(Client $client, Request $request): void;
+	abstract protected function createResponse(Client $client): Response;
 
-	abstract protected function createResult(): void;
+	abstract protected function saveResult(): void;
 }

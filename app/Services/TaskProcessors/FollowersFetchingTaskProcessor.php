@@ -2,48 +2,55 @@
 
 namespace App\Services\TaskProcessors;
 
-use App\Models\Follower as FollowerModel;
-use App\Models\TaskRequests\FollowersFetchingRequest;
-use App\Models\TaskRequests\IRequest;
+use App\Models\Follower;
+use App\Models\Task;
+use App\Models\TaskInputForFollowersFetching;
 use App\Models\TaskResults\FollowersFetchingResult;
 use App\Services\Instagram\Client;
-use App\Services\Instagram\Requests\FollowersRequest as FollowersIgRequest;
-use App\Services\Instagram\Requests\Request;
+use App\Services\Instagram\Requests\FollowersRequest;
 use App\Services\Instagram\Responses\FollowersResponse;
-use App\Services\Instagram\Responses\Response;
 use Illuminate\Support\Arr;
 
 class FollowersFetchingTaskProcessor extends TaskProcessor
 {
-	protected IRequest $requestData;
+	protected FollowersRequest $request;
 
-	protected Response $response;
+	protected FollowersResponse $response;
 
-	protected function createIgRequest(): FollowersIgRequest
+	protected TaskInputForFollowersFetching $inputData;
+
+	public function __construct(Task $task)
 	{
-		$request = new FollowersIgRequest();
-		$request->userPk = $this->requestData->user_pk;
-		$request->maxId = $this->requestData->max_id;
+		parent::__construct($task);
 
-		return $request;
+		$this->inputData = $task->inputData;
+
+		$this->request = new FollowersRequest();
+		$this->request->userPk = $this->inputData->user_pk;
+		$this->request->maxId = $this->inputData->max_id;
 	}
 
-	protected function setIgResponse(Client $client, Request $request): void
+	protected function getRequest(): FollowersRequest
 	{
-		$this->response = new FollowersResponse($client->send($request));
+		return $this->request;
 	}
 
-	protected function createResult(): void
+	protected function createResponse(Client $client): FollowersResponse
+	{
+		return $this->response = new FollowersResponse($client->send($this->request));
+	}
+
+	protected function saveResult(): void
 	{
 		$result = new FollowersFetchingResult($this->response->httpResponse->json());
 		$this->task->result()->save($result);
 
 		collect(Arr::get($this->response->httpResponse->json(), 'users', []))->each(function ($follower) use ($result) {
-			if (FollowerModel::where('pk', $follower['pk'])->exists()) {
+			if (Follower::where('pk', $follower['pk'])->exists()) {
 				return;
 			}
 
-			$follower = new FollowerModel($follower);
+			$follower = new Follower($follower);
 			$result->followers()->save($follower);
 		});
 	}

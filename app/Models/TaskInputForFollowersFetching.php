@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Contracts\TaskInputData;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  * @property string $max_id
  * @property string $user_pk
  */
-class TaskInputForFollowersFetching extends Model
+class TaskInputForFollowersFetching extends Model implements TaskInputData
 {
 	use HasFactory;
 

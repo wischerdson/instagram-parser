@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Task>
  */
-class MailingFactory extends Factory
+class TaskFactory extends Factory
 {
 	protected $model = Mailing::class;
 

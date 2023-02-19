@@ -62,11 +62,4 @@ class RequestLog extends Model
 			set: fn (mixed $value) => json_encode($value)
 		);
 	}
-
-	protected function responseBody(): Attribute
-	{
-		return Attribute::make(
-			set: fn (mixed $value) => substr($value, 0, min(mb_strlen($value, 'ascii'), 64*1024 - 1))
-		);
-	}
 }

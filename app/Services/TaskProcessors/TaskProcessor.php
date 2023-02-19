@@ -9,6 +9,7 @@ use App\Services\Instagram\Client;
 use App\Services\Instagram\Headers;
 use App\Services\Instagram\Requests\Request;
 use App\Services\Instagram\Responses\Response;
+use App\Services\TasksDispatcher;
 
 abstract class TaskProcessor
 {
@@ -30,18 +31,26 @@ abstract class TaskProcessor
 
 		$response = $this->createResponse(new Client());
 
-		$this->logRequest($request, $response);
+		if ($response) {
+			$this->logRequest($request, $response);
 
-		if ($response->isSomethingWrong()) {
-			$this->task->setFailedStatus();
-			$this->task->save();
+			if ($response->isSomethingWrong()) {
+				$this->task->setFailedStatus();
+				$this->task->save();
 
-			$this->worker->deactivate();
+				$this->worker->deactivate();
 
-			return false;
+				return false;
+			}
+
+			$this->saveResult();
 		}
 
-		$this->saveResult();
+		$this->task->setProcessedStatus();
+		$this->task->save();
+		$this->worker->release();
+
+		TasksDispatcher::assignWork();
 
 		return true;
 	}
@@ -68,7 +77,7 @@ abstract class TaskProcessor
 
 	abstract protected function getRequest(): Request;
 
-	abstract protected function createResponse(Client $client): Response;
+	abstract protected function createResponse(Client $client): ?Response;
 
 	abstract protected function saveResult(): void;
 }

@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Task;
-use App\Models\TaskInputForFollowersFetching;
-use App\Models\TaskRequests\FollowersFetchingRequest;
+use App\Services\TaskCreator;
+use App\Services\TasksDispatcher;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -16,16 +15,8 @@ class TaskController extends Controller
 
 	public function create(Request $request)
 	{
-		$pk = $request->pk;
-
-		$inputData = new TaskInputForFollowersFetching();
-		$inputData->user_pk = $pk;
-		$inputData->save();
-
-		$task = new Task();
-		$task->setFollowerFetchingType();
-
-		$inputData->task()->save($task);
+		TaskCreator::fetchFollowers($request->pk);
+		TasksDispatcher::assignWork();
 
 		return redirect()->back();
 	}

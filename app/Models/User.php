@@ -29,7 +29,11 @@ class User extends Model implements TaskResult
 {
 	use HasFactory;
 
+	const UPDATED_AT = null;
+
 	protected $table = 'users';
+
+	protected $guarded = [];
 
 	public function task(): MorphOne
 	{

@@ -22,7 +22,7 @@ class User extends Model
 
 	public ?string $publicPhoneNumber;
 
-	public ?int $publicPhoneCountryCode;
+	public int | string | null $publicPhoneCountryCode;
 
 	public ?string $publicEmail;
 

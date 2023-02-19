@@ -61,6 +61,11 @@ class Task extends Model
 		$this->status = self::STATUS_FAILED;
 	}
 
+	public function setProcessedStatus(): void
+	{
+		$this->status = self::STATUS_PROCESSED;
+	}
+
 	public function result(): MorphTo
 	{
 		return $this->morphTo(type: 'result_type', id: 'result_id');

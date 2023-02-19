@@ -19,11 +19,16 @@ class TasksDispatcher
 		foreach ($tasks as $idx => $task) {
 			$worker = $freeWorkers[$idx];
 
+			$worker->loadWithTask();
+
 			$task->worker()->associate($worker);
-			// $task->setInProcessStatus();
+			$task->setInProcessStatus();
 			$task->save();
 
-			ProcessTask::dispatch($task);
+			$delay = random_int(10, 60);
+			dump('Find task: '.$task->id.' for worker '.$worker->login.' with delay in '.$delay.'s');
+
+			ProcessTask::dispatch($task)->delay(now()->addSeconds($delay));
 		}
 	}
 

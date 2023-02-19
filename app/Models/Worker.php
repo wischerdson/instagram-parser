@@ -36,14 +36,21 @@ class Worker extends Model
 
 	protected $fillable = ['login', 'password', 'headers'];
 
-	public function scopeFree(Builder $query): void
-	{
-		$query->where('status', self::STATUS_READY_TO_WORK);
-	}
-
 	public function tasks(): HasMany
 	{
 		return $this->hasMany(Task::class, 'worker_id');
+	}
+
+	public function currentTask(): HasOne
+	{
+		return $this->hasOne(Task::class, 'worker_id')->ofMany(aggregate: function (Builder $query) {
+			$query->where('status', Task::STATUS_IN_PROCESS);
+		});
+	}
+
+	public function scopeFree(Builder $query): void
+	{
+		$query->where('status', self::STATUS_READY_TO_WORK);
 	}
 
 	public function deactivate(): void
@@ -52,10 +59,15 @@ class Worker extends Model
 		$this->save();
 	}
 
-	public function currentTask(): HasOne
+	public function release(): void
 	{
-		return $this->hasOne(Task::class, 'worker_id')->ofMany(aggregate: function (Builder $query) {
-			$query->where('status', Task::STATUS_IN_PROCESS);
-		});
+		$this->status = self::STATUS_READY_TO_WORK;
+		$this->save();
+	}
+
+	public function loadWithTask(): void
+	{
+		$this->status = self::STATUS_BUSY;
+		$this->save();
 	}
 }

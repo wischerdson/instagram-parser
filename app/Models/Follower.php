@@ -24,6 +24,8 @@ class Follower extends Model
 
 	protected $table = 'followers';
 
+	protected $guarded = [];
+
 	public function result(): BelongsTo
 	{
 		return $this->belongsTo(TaskInputForFollowersFetching::class, 'result_id');

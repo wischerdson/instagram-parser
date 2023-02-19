@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 /**
  * @property int $id
- * @property string $max_id
+ * @property ?string $max_id
  * @property string $user_pk
  */
 class TaskInputForFollowersFetching extends Model implements TaskInputData

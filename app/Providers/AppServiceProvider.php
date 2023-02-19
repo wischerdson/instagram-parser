@@ -28,10 +28,7 @@ class AppServiceProvider extends ServiceProvider
 		JsonResource::withoutWrapping();
 
 		Relation::morphMap([
-			'followers_fetching_request' => \App\Models\TaskRequests\FollowersFetchingRequest::class,
-			'followers_fetching_result' => \App\Models\TaskResults\FollowersFetchingResult::class,
-			'user_info_fetching_request' => \App\Models\TaskRequests\UserInfoFetchingRequest::class,
-			'user_info_fetching_result' => \App\Models\TaskResults\UserInfoFetchingResult::class,
+
 		]);
 	}
 }

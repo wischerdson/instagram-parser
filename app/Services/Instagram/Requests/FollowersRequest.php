@@ -14,7 +14,7 @@ class FollowersRequest extends Request
 
 	public function getUrl(): string
 	{
-		return "https://www.instagram.com/"; //api/v1/friendships/{$this->userPk}/followers/";
+		return "https://www.instagram.com/api/v1/friendships/{$this->userPk}/followers/";
 	}
 
 	public function getMethod(): string

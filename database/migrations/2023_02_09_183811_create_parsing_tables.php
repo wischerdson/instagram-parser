@@ -62,21 +62,21 @@ return new class extends Migration
 		Schema::create('followers', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('result_id')->constrained('task_results_of_followers_fetching')->cascadeOnDelete();
-			$table->string('pk')->unique();
+			$table->string('pk')->unique()->index();
 			$table->string('username')->unique();
 			$table->string('full_name')->nullable();
 			$table->boolean('is_private');
 			$table->boolean('is_verified');
-			$table->string('profile_pic_url')->nullable();
+			$table->text('profile_pic_url')->nullable();
 		});
 
 		Schema::create('users', function (Blueprint $table) {
 			$table->id();
-			$table->string('pk')->unique();
+			$table->string('pk')->unique()->index();
 			$table->string('username')->unique();
 			$table->string('full_name')->nullable();
 			$table->text('biography')->nullable();
-			$table->string('external_url')->nullable();
+			$table->text('external_url')->nullable();
 			$table->string('city_name')->nullable();
 			$table->string('category')->nullable();
 			$table->string('whatsapp_number')->nullable();
@@ -99,7 +99,7 @@ return new class extends Migration
 			$table->text('body')->nullable();
 			$table->text('headers')->nullable();
 			$table->text('response_headers');
-			$table->text('response_body');
+			$table->mediumText('response_body');
 			$table->smallInteger('http_code')->unsigned();
 			$table->timestamp('created_at');
 		});

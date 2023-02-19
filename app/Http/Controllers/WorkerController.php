@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Worker;
+use App\Services\TasksDispatcher;
 use Illuminate\Http\Request;
 
 class WorkerController extends Controller
@@ -22,6 +23,8 @@ class WorkerController extends Controller
 			['login' => $fields->get('login')],
 			$fields->except('_token')->toArray()
 		);
+
+		TasksDispatcher::assignWork();
 
 		return redirect()->back();
 	}

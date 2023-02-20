@@ -2,7 +2,10 @@
 
 namespace App\Integrations\Instagram\Requests;
 
+use App\Integrations\Instagram\Dto;
+use App\Integrations\Instagram\Dto\FollowersResponse;
 use App\Integrations\Instagram\Request;
+use Illuminate\Http\Client\Response;
 
 class FollowersRequest extends Request
 {
@@ -33,5 +36,10 @@ class FollowersRequest extends Request
 		}
 
 		return $out;
+	}
+
+	public function castToDto(Response $response): ?Dto
+	{
+		return new FollowersResponse($response->json());
 	}
 }

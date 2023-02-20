@@ -2,6 +2,8 @@
 
 namespace App\Integrations\Instagram;
 
+use Illuminate\Http\Client\Response;
+
 abstract class Request
 {
 	protected Headers $headers;
@@ -45,5 +47,10 @@ abstract class Request
 	public function getProxy(): ?Proxy
 	{
 		return $this->proxy;
+	}
+
+	public function castToDto(Response $response): ?Dto
+	{
+		return null;
 	}
 }

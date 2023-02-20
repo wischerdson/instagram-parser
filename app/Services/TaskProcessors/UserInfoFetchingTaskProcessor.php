@@ -8,14 +8,10 @@ use App\Models\User;
 use App\Integrations\Instagram\Client;
 use App\Integrations\Instagram\Requests\UserInfoRequest;
 use App\Integrations\Instagram\Response;
-use App\Integrations\Instagram\Responses\UserInfoResponse;
-use Illuminate\Support\Arr;
 
 class UserInfoFetchingTaskProcessor extends TaskProcessor
 {
 	protected UserInfoRequest $request;
-
-	protected UserInfoResponse $response;
 
 	protected TaskInputForUserInfoFetching $inputData;
 
@@ -40,28 +36,16 @@ class UserInfoFetchingTaskProcessor extends TaskProcessor
 			return null;
 		}
 
-		return $this->response = new UserInfoResponse($client->send($this->request));
+		return parent::createResponse($client);
 	}
 
-	protected function saveResult(): void
+	protected function saveResult(Response $response): void
 	{
-		$rawUser = $this->response->httpResponse->json()['user'];
+		/** @var \App\Integrations\Instagram\Dto\UserInfoResponse */
+		$dtoResponse = $response->dto();
+		$dtoUser = $dtoResponse->user;
 
-		$user = new User();
-		$user->pk = Arr::get($rawUser, 'pk');
-		$user->username = Arr::get($rawUser, 'username');
-		$user->full_name = Arr::get($rawUser, 'full_name');
-		$user->biography = Arr::get($rawUser, 'biography');
-		$user->external_url = Arr::get($rawUser, 'external_url');
-		$user->city_name = Arr::get($rawUser, 'city_name');
-		$user->category = Arr::get($rawUser, 'category');
-		$user->whatsapp_number = Arr::get($rawUser, 'whatsapp_number');
-		$user->contact_phone_number = Arr::get($rawUser, 'contact_phone_number');
-		$user->public_phone_number = Arr::get($rawUser, 'public_phone_number');
-		$user->public_phone_country_code = Arr::get($rawUser, 'public_phone_country_code');
-		$user->public_email = Arr::get($rawUser, 'public_email');
-		$user->address_street = Arr::get($rawUser, 'address_street');
-		$user->is_business = Arr::get($rawUser, 'is_business');
+		$user = new User($dtoUser->toArray());
 		$user->save();
 
 		dump('New user: '.$user->username);

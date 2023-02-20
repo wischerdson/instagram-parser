@@ -3,7 +3,7 @@
 namespace App\Integrations\Instagram;
 
 use App\Integrations\Instagram\Request;
-use Illuminate\Http\Client\Response;
+use App\Integrations\Instagram\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -16,7 +16,7 @@ class Client
 		}
 
 		try {
-			return Http::send($request->getMethod(), $request->getUrl(), [
+			$response = Http::send($request->getMethod(), $request->getUrl(), [
 				'query' => $request->getQuery(),
 				'data' => $request->getBody(),
 				'headers' => $request->getHeaders()->toArray(),
@@ -24,7 +24,9 @@ class Client
 			]);
 		} catch (\Throwable $th) {
 			Log::critical($th->getMessage());
-			return null;
+			$response = null;
 		}
+
+		return new Response($response, $request);
 	}
 }

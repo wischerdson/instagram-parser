@@ -43,7 +43,7 @@ abstract class TaskProcessor
 				return false;
 			}
 
-			$this->saveResult();
+			$this->saveResult($response);
 		}
 
 		$this->task->setProcessedStatus();
@@ -53,6 +53,11 @@ abstract class TaskProcessor
 		TasksDispatcher::assignWork();
 
 		return true;
+	}
+
+	protected function createResponse(Client $client): ?Response
+	{
+		return $client->send($this->getRequest());
 	}
 
 	private function logRequest(Request $request, Response $response): void
@@ -77,7 +82,5 @@ abstract class TaskProcessor
 
 	abstract protected function getRequest(): Request;
 
-	abstract protected function createResponse(Client $client): ?Response;
-
-	abstract protected function saveResult(): void;
+	abstract protected function saveResult(Response $response): void;
 }

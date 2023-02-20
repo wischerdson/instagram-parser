@@ -2,22 +2,19 @@
 
 namespace App\Services\TaskProcessors;
 
+use App\Integrations\Instagram\Dto\Follower as DtoFollower;
 use App\Models\Follower;
 use App\Models\Task;
 use App\Models\TaskInputForFollowersFetching;
 use App\Models\TaskResultsOfFollowersFetching;
 use App\Models\User;
-use App\Integrations\Instagram\Client;
 use App\Integrations\Instagram\Requests\FollowersRequest;
-use App\Integrations\Instagram\Responses\FollowersResponse;
+use App\Integrations\Instagram\Response;
 use App\Services\TaskCreator;
-use Illuminate\Support\Arr;
 
 class FollowersFetchingTaskProcessor extends TaskProcessor
 {
 	protected FollowersRequest $request;
-
-	protected FollowersResponse $response;
 
 	protected TaskInputForFollowersFetching $inputData;
 
@@ -37,42 +34,25 @@ class FollowersFetchingTaskProcessor extends TaskProcessor
 		return $this->request;
 	}
 
-	protected function createResponse(Client $client): FollowersResponse
-	{
-		return $this->response = new FollowersResponse($client->send($this->request));
-	}
-
-	protected function saveResult(): void
+	protected function saveResult(Response $response): void
 	{
 		dump('New followers');
 
-		$responseData = $this->response->httpResponse->json();
+		/** @var \App\Integrations\Instagram\Dto\FollowersResponse $dto */
+		$dto = $response->dto();
 
-		$result = new TaskResultsOfFollowersFetching();
-		$result->big_list = Arr::get($responseData, 'big_list');
-		$result->page_size = Arr::get($responseData, 'page_size');
-		$result->next_max_id = Arr::get($responseData, 'next_max_id');
-		$result->has_more = Arr::get($responseData, 'has_more');
-		$result->should_limit_list_of_followers = Arr::get($responseData, 'should_limit_list_of_followers');
-		$result->status = Arr::get($responseData, 'status');
+		$result = new TaskResultsOfFollowersFetching($dto->toArray());
 		$result->save();
 
 		$this->task->result()->associate($result);
 		$this->task->save();
 
-		collect(Arr::get($responseData, 'users', []))->each(function ($user) use ($result) {
-			if (Follower::where('pk', $user['pk'])->exists()) {
+		$dto->followers->each(function (DtoFollower $dtoFollower) use ($result) {
+			if (Follower::where('pk', $dtoFollower->pk)->exists()) {
 				return;
 			}
 
-			$follower = new Follower();
-			$follower->pk = Arr::get($user, 'pk');
-			$follower->username = Arr::get($user, 'username');
-			$follower->full_name = Arr::get($user, 'full_name');
-			$follower->is_private = Arr::get($user, 'is_private');
-			$follower->is_verified = Arr::get($user, 'is_verified');
-			$follower->profile_pic_url = Arr::get($user, 'profile_pic_url');
-
+			$follower = new Follower($dtoFollower->toArray());
 			$result->followers()->save($follower);
 
 			if (!$follower->is_private && User::where('pk', $follower->pk)->doesntExist()) {

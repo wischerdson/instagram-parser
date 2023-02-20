@@ -5,17 +5,18 @@ namespace App\Integrations\Instagram;
 use App\Integrations\Instagram\Cookie;
 use Illuminate\Http\Client\Response as HttpResponse;
 
-abstract class Response
+class Response
 {
-	public readonly ?HttpResponse $httpResponse;
+	public readonly HttpResponse $httpResponse;
 
-	public function __construct(?HttpResponse $httpResponse)
+	public readonly Request $request;
+
+	private ?Dto $dto = null;
+
+	public function __construct(?HttpResponse $httpResponse, Request $request)
 	{
 		$this->httpResponse = $httpResponse;
-
-		if (!$this->isSomethingWrong()) {
-			$this->fill($this->httpResponse->json());
-		}
+		$this->request = $request;
 	}
 
 	public function isSomethingWrong(): bool
@@ -26,7 +27,7 @@ abstract class Response
 	/**
 	 * Получить cookie ответа
 	 */
-	final public function getCookie(): Cookie
+	public function getCookie(): Cookie
 	{
 		$cookiesJar = $this->httpResponse->cookies();
 
@@ -39,5 +40,8 @@ abstract class Response
 		return $cookie;
 	}
 
-	abstract protected function fill(array $responseData): void;
+	public function dto(): Dto
+	{
+		return $this->dto ?: $this->request->castToDto($this->httpResponse);
+	}
 }

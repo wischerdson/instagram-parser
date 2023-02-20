@@ -5,10 +5,10 @@ namespace App\Services\TaskProcessors;
 use App\Models\RequestLog;
 use App\Models\Task;
 use App\Models\Worker;
-use App\Services\Instagram\Client;
-use App\Services\Instagram\Headers;
-use App\Services\Instagram\Requests\Request;
-use App\Services\Instagram\Responses\Response;
+use App\Integrations\Instagram\Client;
+use App\Integrations\Instagram\Headers;
+use App\Integrations\Instagram\Request;
+use App\Integrations\Instagram\Response;
 use App\Services\TasksDispatcher;
 
 abstract class TaskProcessor

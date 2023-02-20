@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Instagram;
+namespace App\Integrations\Instagram;
 
 use Illuminate\Support\Arr;
 

@@ -7,9 +7,9 @@ use App\Models\Task;
 use App\Models\TaskInputForFollowersFetching;
 use App\Models\TaskResultsOfFollowersFetching;
 use App\Models\User;
-use App\Services\Instagram\Client;
-use App\Services\Instagram\Requests\FollowersRequest;
-use App\Services\Instagram\Responses\FollowersResponse;
+use App\Integrations\Instagram\Client;
+use App\Integrations\Instagram\Requests\FollowersRequest;
+use App\Integrations\Instagram\Responses\FollowersResponse;
 use App\Services\TaskCreator;
 use Illuminate\Support\Arr;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Instagram\Responses;
+namespace App\Integrations\Instagram;
 
-use App\Services\Instagram\Cookie;
+use App\Integrations\Instagram\Cookie;
 use Illuminate\Http\Client\Response as HttpResponse;
 
 abstract class Response

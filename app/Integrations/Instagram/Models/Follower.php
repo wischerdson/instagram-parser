@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Instagram\Models;
+namespace App\Integrations\Instagram\Models;
 
 class Follower extends Model
 {

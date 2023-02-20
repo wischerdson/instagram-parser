@@ -5,10 +5,10 @@ namespace App\Services\TaskProcessors;
 use App\Models\Task;
 use App\Models\TaskInputForUserInfoFetching;
 use App\Models\User;
-use App\Services\Instagram\Client;
-use App\Services\Instagram\Requests\UserInfoRequest;
-use App\Services\Instagram\Responses\Response;
-use App\Services\Instagram\Responses\UserInfoResponse;
+use App\Integrations\Instagram\Client;
+use App\Integrations\Instagram\Requests\UserInfoRequest;
+use App\Integrations\Instagram\Response;
+use App\Integrations\Instagram\Responses\UserInfoResponse;
 use Illuminate\Support\Arr;
 
 class UserInfoFetchingTaskProcessor extends TaskProcessor

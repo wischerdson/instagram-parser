@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Services\Instagram\Responses;
+namespace App\Integrations\Instagram\Responses;
 
-use App\Services\Instagram\Models\Follower;
+use App\Integrations\Instagram\Models\Follower;
+use App\Integrations\Instagram\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
@@ -20,7 +21,7 @@ class FollowersResponse extends Response
 
 	public readonly string $status;
 
-	/** @var \Illuminate\Support\Collection<\App\Services\Instagram\Models\Follower> $followers */
+	/** @var \Illuminate\Support\Collection<\App\Integrations\Instagram\Models\Follower> $followers */
 	public readonly Collection $followers;
 
 	protected function fill(array $data): void

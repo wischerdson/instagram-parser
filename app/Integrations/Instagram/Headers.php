@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Instagram;
+namespace App\Integrations\Instagram;
 
 use Illuminate\Support\Arr;
 
@@ -56,9 +56,13 @@ class Headers
 	 */
 	public function toArray(): array
 	{
-		$cookie = ($this->cookie && $this->cookie->isNotEmpty()) ? ['Cookie' => $this->cookie->toString()] : [];
+		$headers = $this->headers;
 
-		return array_merge($this->headers, $cookie);
+		if ($this->cookie && $this->cookie->isNotEmpty()) {
+			$headers['Cookie'] = $this->cookie->toString();
+		}
+
+		return $this->headers;
 	}
 
 	public function getCookie(): ?Cookie

@@ -1,16 +1,21 @@
 <?php
 
-namespace App\Services\Instagram\Requests;
-
-use App\Services\Instagram\Headers;
+namespace App\Integrations\Instagram;
 
 abstract class Request
 {
 	protected Headers $headers;
 
+	protected ?Proxy $proxy;
+
+	protected string $method;
+
 	abstract public function getUrl(): string;
 
-	abstract public function getMethod(): string;
+	public function getMethod(): string
+	{
+		return $this->method;
+	}
 
 	public function getQuery(): array
 	{
@@ -30,5 +35,15 @@ abstract class Request
 	public function authorize(Headers $headers): void
 	{
 		$this->headers = $headers;
+	}
+
+	public function setProxy(Proxy $proxy): void
+	{
+		$this->proxy = $proxy;
+	}
+
+	public function getProxy(): ?Proxy
+	{
+		return $this->proxy;
 	}
 }

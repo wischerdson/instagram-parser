@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Services\Instagram\Responses;
+namespace App\Integrations\Instagram\Responses;
 
-use App\Services\Instagram\Models\User;
+use App\Integrations\Instagram\Models\User;
+use App\Integrations\Instagram\Response;
 use Illuminate\Support\Arr;
 
 class UserInfoResponse extends Response

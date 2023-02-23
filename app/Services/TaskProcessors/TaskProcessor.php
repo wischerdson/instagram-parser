@@ -2,13 +2,12 @@
 
 namespace App\Services\TaskProcessors;
 
-use App\Models\RequestLog;
 use App\Models\Task;
 use App\Models\Worker;
-use App\Integrations\Instagram\Client;
 use App\Integrations\Instagram\Headers;
 use App\Integrations\Instagram\Request;
 use App\Integrations\Instagram\Response;
+use App\Services\RequestLogger;
 use App\Services\TasksDispatcher;
 
 abstract class TaskProcessor
@@ -29,10 +28,10 @@ abstract class TaskProcessor
 		$headers = Headers::parse($this->worker->headers);
 		$request->authorize($headers);
 
-		$response = $this->createResponse(new Client());
+		if ($this->beforeRequestSend()) {
+			$response = $request->send();
 
-		if ($response) {
-			$this->logRequest($request, $response);
+			RequestLogger::log($this->worker, $request, $response->httpResponse, $this->task);
 
 			if ($response->isSomethingWrong()) {
 				$this->task->setFailedStatus();
@@ -48,6 +47,8 @@ abstract class TaskProcessor
 
 		$this->task->setProcessedStatus();
 		$this->task->save();
+
+		$this->worker->last_request_at = now();
 		$this->worker->release();
 
 		TasksDispatcher::assignWork();
@@ -55,29 +56,9 @@ abstract class TaskProcessor
 		return true;
 	}
 
-	protected function createResponse(Client $client): ?Response
+	protected function beforeRequestSend(): bool
 	{
-		return $client->send($this->getRequest());
-	}
-
-	private function logRequest(Request $request, Response $response): void
-	{
-		if (!$response->httpResponse) {
-			return;
-		}
-
-		$log = new RequestLog();
-		$log->worker_id = $this->worker->id;
-		$log->url = $request->getUrl();
-		$log->method = $request->getMethod();
-		$log->request_query = $request->getQuery();
-		$log->body = $request->getBody();
-		$log->headers = $request->getHeaders()->toString();
-		$log->response_headers = $response->httpResponse->headers();
-		$log->response_body = $response->httpResponse->body();
-		$log->http_code = $response->httpResponse->status();
-
-		$this->task->logs()->save($log);
+		return true;
 	}
 
 	abstract protected function getRequest(): Request;

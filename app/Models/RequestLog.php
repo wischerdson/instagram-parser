@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property int $id
  * @property int $worker_id
- * @property int $task_id
  * @property string $url
  * @property string $method
  * @property string $query
@@ -34,9 +34,9 @@ class RequestLog extends Model
 		return $this->belongsTo(Worker::class, 'worker_id');
 	}
 
-	public function task(): BelongsTo
+	public function task(): HasOne
 	{
-		return $this->belongsTo(Task::class, 'task_id');
+		return $this->hasOne(Task::class, 'request_log_id');
 	}
 
 	protected function requestQuery(): Attribute

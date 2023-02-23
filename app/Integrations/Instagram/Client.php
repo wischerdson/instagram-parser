@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class Client
 {
-	public static function send(Request $request): ?Response
+	public static function send(Request $request): Response
 	{
 		if ($proxy = $request->getProxy() ?: []) {
 			$proxy = ['proxy' => $proxy->getProxyUrl()];

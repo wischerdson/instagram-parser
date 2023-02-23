@@ -2,13 +2,14 @@
 
 namespace App\Integrations\Instagram;
 
+use App\Integrations\Instagram\Response as IgResponse;
 use Illuminate\Http\Client\Response;
 
 abstract class Request
 {
 	protected Headers $headers;
 
-	protected ?Proxy $proxy;
+	protected ?Proxy $proxy = null;
 
 	protected string $method;
 
@@ -52,5 +53,11 @@ abstract class Request
 	public function castToDto(Response $response): ?Dto
 	{
 		return null;
+	}
+
+	public function send(): IgResponse
+	{
+		$client = new Client();
+		return $client->send($this);
 	}
 }

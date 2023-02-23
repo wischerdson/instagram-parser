@@ -17,7 +17,7 @@ class FollowersRequest extends Request
 
 	public string $searchSurface = 'follow_list_page';
 
-	protected $method = 'GET';
+	protected string $method = 'GET';
 
 	public function getUrl(): string
 	{

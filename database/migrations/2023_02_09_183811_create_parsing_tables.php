@@ -24,6 +24,20 @@ return new class extends Migration
 			$table->timestamp('created_at')->useCurrent();
 		});
 
+		Schema::create('requests_logs', function (Blueprint $table) {
+			$table->id();
+			$table->foreignId('worker_id')->nullable()->constrained('workers')->nullOnDelete();
+			$table->string('url');
+			$table->string('method', 10);
+			$table->text('query')->nullable();
+			$table->text('body')->nullable();
+			$table->text('headers')->nullable();
+			$table->text('response_headers');
+			$table->mediumText('response_body');
+			$table->smallInteger('http_code')->unsigned();
+			$table->timestamp('created_at');
+		});
+
 		Schema::create('tasks', function (Blueprint $table) {
 			$table->id();
 			$table->string('type');
@@ -33,6 +47,7 @@ return new class extends Migration
 			$table->bigInteger('result_id')->unsigned()->nullable();
 			$table->enum('status', ['unprocessed', 'in_process', 'processed', 'failed']);
 			$table->foreignId('worker_id')->nullable()->constrained('workers')->nullOnDelete();
+			$table->foreignId('request_log_id')->nullable()->constrained('requests_logs')->nullOnDelete();
 			$table->timestamp('created_at')->useCurrent();
 			$table->timestamp('processed_at')->nullable();
 		});
@@ -88,21 +103,6 @@ return new class extends Migration
 			$table->boolean('is_business')->nullable();
 			$table->timestamp('created_at')->useCurrent();
 		});
-
-		Schema::create('requests_logs', function (Blueprint $table) {
-			$table->id();
-			$table->foreignId('worker_id')->nullable()->constrained('workers')->nullOnDelete();
-			$table->foreignId('task_id')->constrained('tasks')->cascadeOnDelete();
-			$table->string('url');
-			$table->string('method', 10);
-			$table->text('query')->nullable();
-			$table->text('body')->nullable();
-			$table->text('headers')->nullable();
-			$table->text('response_headers');
-			$table->mediumText('response_body');
-			$table->smallInteger('http_code')->unsigned();
-			$table->timestamp('created_at');
-		});
 	}
 
 	/**
@@ -112,13 +112,13 @@ return new class extends Migration
 	 */
 	public function down()
 	{
-		Schema::dropIfExists('requests_logs');
 		Schema::dropIfExists('users');
 		Schema::dropIfExists('followers');
 		Schema::dropIfExists('task_input_for_user_info_fetching');
 		Schema::dropIfExists('task_results_of_followers_fetching');
 		Schema::dropIfExists('task_input_for_followers_fetching');
 		Schema::dropIfExists('tasks');
+		Schema::dropIfExists('requests_logs');
 		Schema::dropIfExists('workers');
 	}
 };

@@ -2,14 +2,16 @@
 
 namespace App\Integrations\Instagram\Requests;
 
+use App\Integrations\Instagram\Dto;
 use App\Integrations\Instagram\Dto\UserInfoResponse;
 use App\Integrations\Instagram\Request;
+use Illuminate\Http\Client\Response;
 
 class UserInfoRequest extends Request
 {
 	public string | int $userPk;
 
-	protected $method = 'GET';
+	protected string $method = 'GET';
 
 	public function getUrl(): string
 	{

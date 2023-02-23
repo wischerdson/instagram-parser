@@ -12,7 +12,7 @@ class Headers
 
 	public function __construct(array $headers, ?Cookie $cookie)
 	{
-		unset($headers['cookie']);
+		unset($headers['Cookie']);
 		$this->headers = $headers;
 		$this->cookie = $cookie;
 	}
@@ -37,15 +37,15 @@ class Headers
 			}
 
 			[$key, $value] = explode(':', $row, 2);
-			$key = mb_strtolower(trim($key));
+			$key = trim($key);
 
 			$carry[$key] = trim($value);
 
 			return $carry;
 		}, []);
 
-		if (array_key_exists('cookie', $headers)) {
-			$cookie = Cookie::parse($headers['cookie']);
+		if (array_key_exists('Cookie', $headers)) {
+			$cookie = Cookie::parse($headers['Cookie']);
 		}
 
 		return new self($headers, $cookie ?? null);
@@ -62,7 +62,7 @@ class Headers
 			$headers['Cookie'] = $this->cookie->toString();
 		}
 
-		return $this->headers;
+		return $headers;
 	}
 
 	public function getCookie(): ?Cookie

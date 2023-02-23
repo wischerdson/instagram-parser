@@ -30,13 +30,9 @@ class UserInfoFetchingTaskProcessor extends TaskProcessor
 		return $this->request;
 	}
 
-	protected function createResponse(Client $client): ?Response
+	protected function beforeRequestSend(): bool
 	{
-		if (User::where('pk', $this->request->userPk)->exists()) {
-			return null;
-		}
-
-		return parent::createResponse($client);
+		return User::where('pk', $this->request->userPk)->doesntExist();
 	}
 
 	protected function saveResult(Response $response): void

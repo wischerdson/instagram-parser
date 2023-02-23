@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Worker;
 use App\Services\TasksDispatcher;
+use App\Services\WorkerHealthcheck;
 use Illuminate\Console\Command;
 
 class Ig extends Command
@@ -21,6 +23,8 @@ class Ig extends Command
 	 */
 	public function handle()
 	{
+		// $result = WorkerHealthcheck::check(Worker::find(1));
+		// dd($result);
 		TasksDispatcher::assignWork();
 
 		return Command::SUCCESS;

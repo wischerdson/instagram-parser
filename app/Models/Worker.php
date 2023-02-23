@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string $password
  * @property string $headers
  * @property string $status
+ * @property string $last_request_at
  * @property string $sleeps_until
  * @property string $created_at
  */
@@ -46,6 +47,11 @@ class Worker extends Model
 		return $this->hasOne(Task::class, 'worker_id')->ofMany(aggregate: function (Builder $query) {
 			$query->where('status', Task::STATUS_IN_PROCESS);
 		});
+	}
+
+	public function requestLogs(): HasMany
+	{
+		return $this->hasMany(RequestLog::class, 'worker_id');
 	}
 
 	public function scopeFree(Builder $query): void

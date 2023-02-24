@@ -23,6 +23,17 @@
 		<button class="btn btn-primary" style="margin-top: 20px">Update or create</button>
 	</form>
 
+	<form class="container" method="POST" action="/workers/iam">
+		<div class="mt-2">
+			<label class="form-label" for="iam">IAM</label>
+			<textarea class="form-control" type="text" id="iam" name="iam"></textarea>
+			<a class="text-xs text-blue-500 underline" target="_blank" href="https://darkstore.biz/products/view/instagram-mob-api-emulator-sms-last-api-ne-boatsa-cistok-zivut-v-otlezke-top-kacestvo-ocen-krepkie-100-valid">https://darkstore.biz/products/view/instagram-mob-api-emulator-sms-last-api-ne-boatsa-cistok-zivut-v-otlezke-top-kacestvo-ocen-krepkie-100-valid</a>
+		</div>
+
+		@csrf
+		<button class="btn btn-primary" style="margin-top: 20px">Update or create</button>
+	</form>
+
 	<div class="container mt-10">
 		<table class="table">
 			<thead>

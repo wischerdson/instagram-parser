@@ -18,7 +18,7 @@ class WorkerHealthcheck
 
 		RequestLogger::log($worker, $request, $response);
 
-		if ($response->successful()) {
+		if ($response && $response->successful()) {
 			$data = $response->json();
 
 			if ($data && array_key_exists('status', $data) && $data['status'] === 'ok') {

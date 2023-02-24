@@ -7,7 +7,7 @@ use Illuminate\Http\Client\Response as HttpResponse;
 
 class Response
 {
-	public readonly HttpResponse $httpResponse;
+	public readonly ?HttpResponse $httpResponse;
 
 	public readonly Request $request;
 

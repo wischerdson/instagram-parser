@@ -36,4 +36,16 @@ class Follower extends Dto
 		$this->accountBadges   = (array) $this->get('account_badges', default: []);
 		$this->latestReelMedia = ($tmp = $this->get('latest_reel_media')) === null ? null : (int) $tmp;
 	}
+
+	public function toArray(): array
+	{
+		return [
+			'pk'              => $this->pk,
+			'username'        => $this->username,
+			'full_name'       => $this->fullName,
+			'is_private'      => $this->isPrivate,
+			'is_verified'     => $this->isVerified,
+			'profile_pic_url' => $this->profilePicUrl
+		];
+	}
 }

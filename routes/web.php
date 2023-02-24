@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('workers', [WorkerController::class, 'index']);
 Route::post('workers', [WorkerController::class, 'updateOrCreate']);
+Route::post('workers/iam', [WorkerController::class, 'iam']);
 Route::delete('workers', [WorkerController::class, 'delete']);
 
 Route::get('tasks', [TaskController::class, 'index']);

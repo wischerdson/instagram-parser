@@ -35,4 +35,37 @@ class WorkerController extends Controller
 
 		return redirect()->back();
 	}
+
+	public function iam(Request $request)
+	{
+		$iam = $request->iam;
+
+		$rows = explode('||', $iam);
+
+		foreach ($rows as $row) {
+			if (!$row) {
+				continue;
+			}
+
+			[$credentials, $useragent, $techData, $cookie] = explode('|', $row);
+			[$login, $password] = explode(':', $credentials);
+
+			$headers = [
+				"User-Agent: {$useragent}",
+				"Cookie: {$cookie}"
+			];
+
+			Worker::updateOrCreate(
+				['login' => $login],
+				[
+					'password' => $password,
+					'headers' => implode("\n", $headers)
+				]
+			);
+		}
+
+		TasksDispatcher::assignWork();
+
+		return redirect()->back();
+	}
 }

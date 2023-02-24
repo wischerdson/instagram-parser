@@ -44,8 +44,15 @@ class Worker extends Model
 
 	public function currentTask(): HasOne
 	{
-		return $this->hasOne(Task::class, 'worker_id')->ofMany(aggregate: function (Builder $query) {
+		return $this->hasOne(Task::class, 'worker_id')->ofMany([], aggregate: function (Builder $query) {
 			$query->where('status', Task::STATUS_IN_PROCESS);
+		});
+	}
+
+	public function lastTask(): HasOne
+	{
+		return $this->hasOne(Task::class, 'worker_id')->ofMany(['processed_at' => 'max'], aggregate: function (Builder $query) {
+			$query->where('status', Task::STATUS_PROCESSED);
 		});
 	}
 

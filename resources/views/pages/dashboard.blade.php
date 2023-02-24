@@ -4,7 +4,7 @@
 	<div class="container">
 		<h2 class="text-2xl font-bold">Dashboard</h2>
 		<div class="flex items-start gap-10 mt-10">
-			<table class="table">
+			<table class="table max-w-lg">
 				<tbody>
 					<tr>
 						<td>Собрано пользователей</td>
@@ -41,6 +41,7 @@
 					<th>Аккаунт</th>
 					<th>Выполнил задач сегодня</th>
 					<th>Выполнил задач всего</th>
+					<th>Дата последнего запроса</th>
 				</thead>
 				<tbody>
 					@foreach ($accounts as $account)
@@ -48,6 +49,7 @@
 							<td>{{ $account->login }}</td>
 							<td>{{ $account->today_tasks_count }}</td>
 							<td>{{ $account->tasks_count }}</td>
+							<td>{{ $account->lastTask->processed_at }}</td>
 						</tr>
 					@endforeach
 				</tbody>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TaskInputForFollowersFetching;
 use App\Services\TaskCreator;
 use App\Services\TasksDispatcher;
 use Illuminate\Http\Request;
@@ -15,8 +16,10 @@ class TaskController extends Controller
 
 	public function create(Request $request)
 	{
-		TaskCreator::fetchFollowers($request->pk);
-		TasksDispatcher::assignWork();
+		if (TaskInputForFollowersFetching::where('user_pk', $request->pk)->doesntExist()) {
+			TaskCreator::fetchFollowers($request->pk);
+			TasksDispatcher::assignWork();
+		}
 
 		return redirect()->back();
 	}

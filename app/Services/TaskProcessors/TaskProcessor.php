@@ -46,6 +46,7 @@ abstract class TaskProcessor
 		}
 
 		$this->task->setProcessedStatus();
+		$this->task->processed_at = now();
 		$this->task->save();
 
 		$this->worker->last_request_at = now();

@@ -5,7 +5,6 @@ namespace App\Services\TaskProcessors;
 use App\Models\Task;
 use App\Models\TaskInputForUserInfoFetching;
 use App\Models\User;
-use App\Integrations\Instagram\Client;
 use App\Integrations\Instagram\Requests\UserInfoRequest;
 use App\Integrations\Instagram\Response;
 

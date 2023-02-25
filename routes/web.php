@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [DashboardController::class, 'index']);
 
+Route::get('worker-healthcheck/{id}', [WorkerController::class, 'healthcheck']);
 Route::get('workers', [WorkerController::class, 'index']);
 Route::post('workers', [WorkerController::class, 'updateOrCreate']);
 Route::post('workers/iam', [WorkerController::class, 'iam']);

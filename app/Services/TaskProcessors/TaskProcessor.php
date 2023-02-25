@@ -34,12 +34,14 @@ abstract class TaskProcessor
 			RequestLogger::log($this->worker, $request, $response->httpResponse, $this->task);
 
 			if ($response->isSomethingWrong()) {
-				$this->task->setFailedStatus();
-				$this->task->save();
+				if (!($json = $response->httpResponse->json()) || $json['message'] !== 'Target user not found') {
+					$this->task->setFailedStatus();
+					$this->task->save();
 
-				$this->worker->deactivate();
+					$this->worker->deactivate();
 
-				return false;
+					return false;
+				}
 			}
 
 			$this->saveResult($response);

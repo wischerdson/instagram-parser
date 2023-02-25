@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Worker;
 use App\Services\TasksDispatcher;
+use App\Services\WorkerHealthcheck;
 use Illuminate\Http\Request;
 
 class WorkerController extends Controller
@@ -67,5 +68,12 @@ class WorkerController extends Controller
 		TasksDispatcher::assignWork();
 
 		return redirect()->back();
+	}
+
+	public function healthcheck(int $id)
+	{
+		$result = WorkerHealthcheck::check(Worker::find($id));
+
+		return redirect()->back()->with('healthcheck', $result);
 	}
 }

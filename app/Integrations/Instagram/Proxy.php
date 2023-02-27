@@ -18,7 +18,7 @@ class Proxy
 	 * @param string $scheme e.g. http, socks or http://username:password@192.168.16.1:10
 	 * @param null|string $host e.g. 64.233.165.101
 	 */
-	public function __construct(string $scheme, ?string $host, ?string $username, ?string $password, ?string $port)
+	public function __construct(string $scheme, ?string $host = null, ?string $username = null, ?string $password = null, ?string $port = null)
 	{
 		$isComplicated = preg_match_all("/^(?P<scheme>\w+):\/\/(?P<username>\w+):(?P<password>.+)@(?P<host>(\d|\.)+):(?P<port>\d+)$/", $scheme, $matches);
 

@@ -31,7 +31,7 @@ class UserInfoFetchingTaskProcessor extends TaskProcessor
 
 	protected function beforeRequestSend(): bool
 	{
-		return User::where('pk', $this->request->userPk)->doesntExist();
+		return User::where('pk', $this->request->userPk)->doesntExist() && parent::beforeRequestSend();
 	}
 
 	protected function saveResult(Response $response): void
@@ -42,8 +42,6 @@ class UserInfoFetchingTaskProcessor extends TaskProcessor
 
 		$user = new User($dtoUser->toArray());
 		$user->save();
-
-		dump('New user: '.$user->username);
 
 		$this->task->result()->associate($user);
 	}

@@ -40,7 +40,7 @@ abstract class Request
 		$this->headers = $headers;
 	}
 
-	public function setProxy(Proxy $proxy): void
+	public function useProxy(Proxy $proxy): void
 	{
 		$this->proxy = $proxy;
 	}

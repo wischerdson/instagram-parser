@@ -5,6 +5,7 @@ namespace App\Services\TaskProcessors;
 use App\Models\Task;
 use App\Models\Worker;
 use App\Integrations\Instagram\Headers;
+use App\Integrations\Instagram\Proxy;
 use App\Integrations\Instagram\Request;
 use App\Integrations\Instagram\Response;
 use App\Services\RequestLogger;
@@ -28,6 +29,10 @@ abstract class TaskProcessor
 		$headers = Headers::parse($this->worker->headers);
 		$request->authorize($headers);
 
+		if ($this->worker->proxy) {
+			$request->useProxy(new Proxy($this->worker->proxy));
+		}
+
 		if ($this->beforeRequestSend()) {
 			$response = $request->send();
 
@@ -44,6 +49,7 @@ abstract class TaskProcessor
 				}
 			}
 
+			$this->worker->last_request_at = now();
 			$this->saveResult($response);
 		}
 
@@ -51,7 +57,6 @@ abstract class TaskProcessor
 		$this->task->processed_at = now();
 		$this->task->save();
 
-		$this->worker->last_request_at = now();
 		$this->worker->release();
 
 		TasksDispatcher::assignWork();

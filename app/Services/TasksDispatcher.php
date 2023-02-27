@@ -26,7 +26,7 @@ class TasksDispatcher
 			$task->save();
 
 			$delay = random_int(10, 60);
-			dump('Find task: '.$task->id.' for worker '.$worker->login.' with delay in '.$delay.'s');
+			dump('Find task #'.$task->id.' for worker '.$worker->login.' with delay in '.$delay.'s');
 
 			ProcessTask::dispatch($task)->delay(now()->addSeconds($delay));
 		}

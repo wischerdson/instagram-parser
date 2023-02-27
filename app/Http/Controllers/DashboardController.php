@@ -21,7 +21,9 @@ class DashboardController extends Controller
 			'all_accounts' => Worker::count(),
 			'failed_tasks' => Task::where('status', Task::STATUS_FAILED)->count(),
 			'accounts' => Worker::with('lastTask')->withCount([
-				'tasks as tasks_count',
+				'tasks as tasks_count' => function (Builder $query) {
+					$query->where('status', Task::STATUS_PROCESSED);
+				},
 				'tasks as today_tasks_count' => function (Builder $query) {
 					$query->where('processed_at', '>=', today());
 				}

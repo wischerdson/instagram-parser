@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\RequestLog;
 use App\Models\Worker;
 use App\Services\TasksDispatcher;
 use App\Services\WorkerHealthcheck;

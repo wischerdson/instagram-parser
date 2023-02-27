@@ -36,8 +36,6 @@ class FollowersFetchingTaskProcessor extends TaskProcessor
 
 	protected function saveResult(Response $response): void
 	{
-		dump('New followers');
-
 		/** @var \App\Integrations\Instagram\Dto\FollowersResponse $dto */
 		$dto = $response->dto();
 

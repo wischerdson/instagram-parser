@@ -13,7 +13,6 @@
 	<header class="container my-10">
 		<nav class="flex gap-6 text-blue-500">
 			<a class="btn-link" href="/">Dashboard</a>
-			<a class="btn-link" href="/workers">Workers</a>
 			<a class="btn-link" href="/tasks">Tasks</a>
 		</nav>
 	</header>

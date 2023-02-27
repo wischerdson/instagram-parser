@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RequestLog;
 use App\Models\Worker;
 use App\Services\TasksDispatcher;
 use App\Services\WorkerHealthcheck;
@@ -9,14 +10,20 @@ use Illuminate\Http\Request;
 
 class WorkerController extends Controller
 {
-	public function index()
+	public function create()
 	{
-		$workers = Worker::all();
-
-		return view('pages.workers', ['workers' => $workers]);
+		return view('pages.workers.create');
 	}
 
-	public function updateOrCreate(Request $request)
+	public function edit(int $workerId)
+	{
+		$worker = Worker::findOrFail($workerId);
+		$worker->load('lastRequestLog');
+
+		return view('pages.workers.edit', ['worker' => $worker]);
+	}
+
+	public function store(Request $request)
 	{
 		$fields = $request->collect()->filter();
 
@@ -25,19 +32,20 @@ class WorkerController extends Controller
 			$fields->except('_token')->toArray()
 		);
 
-		TasksDispatcher::assignWork();
-
-		return redirect()->back();
+		return redirect()->to('/workers');
 	}
 
-	public function delete(Request $request)
+	public function update(int $id, Request $request)
 	{
-		Worker::destroy($request->id);
+		$fields = $request->collect()->filter();
+		$worker = Worker::findOrFail($id);
+		$worker->fill($fields->all());
+		$worker->save();
 
 		return redirect()->back();
 	}
 
-	public function iam(Request $request)
+	public function storeViaIam(Request $request)
 	{
 		$iam = $request->iam;
 
@@ -57,15 +65,20 @@ class WorkerController extends Controller
 			];
 
 			Worker::updateOrCreate(
-				['login' => $login],
+				['login' => trim($login)],
 				[
-					'password' => $password,
+					'password' => trim($password),
 					'headers' => implode("\n", $headers)
 				]
 			);
 		}
 
-		TasksDispatcher::assignWork();
+		return redirect()->to('/workers');
+	}
+
+	public function delete(int $id)
+	{
+		Worker::destroy($id);
 
 		return redirect()->back();
 	}
@@ -75,5 +88,12 @@ class WorkerController extends Controller
 		$result = WorkerHealthcheck::check(Worker::find($id));
 
 		return redirect()->back()->with('healthcheck', $result);
+	}
+
+	public function load()
+	{
+		TasksDispatcher::assignWork();
+
+		return redirect()->back();
 	}
 }

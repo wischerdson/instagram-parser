@@ -35,7 +35,7 @@ class Worker extends Model
 
 	protected $table = 'workers';
 
-	protected $fillable = ['login', 'password', 'headers'];
+	protected $fillable = ['login', 'password', 'headers', 'proxy', 'status'];
 
 	public function tasks(): HasMany
 	{
@@ -54,6 +54,11 @@ class Worker extends Model
 		return $this->hasOne(Task::class, 'worker_id')->ofMany(['processed_at' => 'max'], aggregate: function (Builder $query) {
 			$query->where('status', Task::STATUS_PROCESSED);
 		});
+	}
+
+	public function lastRequestLog(): HasOne
+	{
+		return $this->hasOne(RequestLog::class, 'worker_id')->ofMany('created_at');
 	}
 
 	public function requestLogs(): HasMany

@@ -50,7 +50,7 @@ class RequestLog extends Model
 	protected function body(): Attribute
 	{
 		return Attribute::make(
-			get: fn (string $value) => $value ? unserialize($value) : null,
+			get: fn (?string $value) => $value ? unserialize($value) : null,
 			set: fn (mixed $value) => $value ? serialize($value) : null
 		);
 	}

@@ -35,30 +35,45 @@
 				</tr>
 			</tbody>
 		</table>
-		<table class="table mt-10">
+		<div class="mt-10 mb-2 flex space-x-4">
+			<a class="btn btn-primary" href="/workers/create">Create new worker(s)</a>
+			<a class="btn btn-light" href="/workers/load">Assign works</a>
+		</div>
+		<table class="table">
 			<thead>
+				<th>#</th>
 				<th>Аккаунт</th>
 				<th>Выполнил задач сегодня</th>
 				<th>Выполнил задач всего</th>
 				<th>Дата последнего запроса</th>
+				<th></th>
 			</thead>
 			<tbody>
-				@foreach ($accounts as $account)
+				@foreach ($accounts as $worker)
 					<tr>
+						<td>{{ $worker->id }}</td>
 						<td class="whitespace-nowrap">
-							@if ($account->status === \App\Models\Worker::STATUS_INACTIVE)
+							@if ($worker->status === \App\Models\Worker::STATUS_INACTIVE)
 								<div class="inline-block w-2 h-2 rounded-full bg-red-500"></div>
 							@else
 								<div class="inline-block w-2 h-2 rounded-full bg-green-500"></div>
 							@endif
-							{{ $account->login }}
+
+							<span><b>{{ $worker->login }}</b>:{{ $worker->password }}</span>
 						</td>
-						<td>{{ $account->today_tasks_count }}</td>
-						<td>{{ $account->tasks_count }}</td>
-						<td>{{ $account->lastTask->processed_at }}</td>
-						@if ($account->status === \App\Models\Worker::STATUS_INACTIVE)
-							<td><a class="btn btn-primary btn-sm" href="/worker-healthcheck/{{ $account->id }}">Healthcheck</a></td>
-						@endif
+						<td>{{ $worker->today_tasks_count }}</td>
+						<td>{{ $worker->tasks_count }}</td>
+						<td>
+							@if ($worker->lastTask)
+								{{ $worker->lastTask->processed_at }}
+							@endif
+						</td>
+						<td>
+							<a class="btn btn-primary btn-sm" href="/workers/{{ $worker->id }}">Details</a>
+							@if ($worker->status === \App\Models\Worker::STATUS_INACTIVE)
+								<a class="btn btn-info btn-sm" href="/worker-healthcheck/{{ $worker->id }}">Healthcheck</a>
+							@endif
+						</td>
 					</tr>
 				@endforeach
 			</tbody>

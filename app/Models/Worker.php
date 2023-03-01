@@ -33,6 +33,9 @@ class Worker extends Model
 	/** Последний запрос вернул ошибку */
 	const STATUS_INACTIVE = 'inactive';
 
+	/** С воркером все хорошо, но работать он по каким-то причинам не должен */
+	const STATUS_PAUSE = 'pause';
+
 	protected $table = 'workers';
 
 	protected $fillable = ['login', 'password', 'headers', 'proxy', 'status'];
@@ -71,6 +74,11 @@ class Worker extends Model
 		$query->where('status', self::STATUS_READY_TO_WORK);
 	}
 
+	public function scopePaused(Builder $query): void
+	{
+		$query->where('status', self::STATUS_PAUSE);
+	}
+
 	public function deactivate(): void
 	{
 		$this->status = self::STATUS_INACTIVE;
@@ -80,6 +88,12 @@ class Worker extends Model
 	public function release(): void
 	{
 		$this->status = self::STATUS_READY_TO_WORK;
+		$this->save();
+	}
+
+	public function pause(): void
+	{
+		$this->status = self::STATUS_PAUSE;
 		$this->save();
 	}
 

@@ -70,7 +70,7 @@ use App\Models\Worker;
 						</tr>
 						<tr>
 							<th scope="row">Response headers</th>
-							<td scope="row"><pre class="text-sm"><?php dump($worker->lastRequestLog->response_headers) ?></pre></td>
+							<td scope="row"><pre class="text-sm"><?php // dump($worker->lastRequestLog->response_headers) ?></pre></td>
 						</tr>
 						<tr>
 							<th scope="row">Response body</th>

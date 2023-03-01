@@ -91,6 +91,7 @@ class WorkerController extends Controller
 
 	public function load()
 	{
+		Worker::paused()->update(['status' => Worker::STATUS_READY_TO_WORK]);
 		TasksDispatcher::assignWork();
 
 		return redirect()->back();

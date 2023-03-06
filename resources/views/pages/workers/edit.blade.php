@@ -48,41 +48,7 @@ use App\Models\Worker;
 			<button class="btn btn-primary mt-3">Save</button>
 		</form>
 		<div class="mt-10">
-			@if ($worker->lastRequestLog)
-				<h2 class="text-2xl font-bold mb-4">Last request log</h2>
-				<table class="table">
-					<tbody>
-						<tr>
-							<th scope="row">URL</th>
-							<td scope="row"><pre class="text-sm">{{ $worker->lastRequestLog->url }}</pre></td>
-						</tr>
-						<tr>
-							<th scope="row">Query</th>
-							<td scope="row"><pre class="text-sm">{{ $worker->lastRequestLog->query }}</pre></td>
-						</tr>
-						<tr>
-							<th scope="row">Body</th>
-							<td scope="row"><pre class="text-sm">{{ $worker->lastRequestLog->body ?: '-' }}</pre></td>
-						</tr>
-						<tr>
-							<th scope="row">Headers</th>
-							<td scope="row"><pre class="text-sm">{{ $worker->lastRequestLog->headers }}</pre></td>
-						</tr>
-						<tr>
-							<th scope="row">Response headers</th>
-							<td scope="row"><pre class="text-sm"><?php // dump($worker->lastRequestLog->response_headers) ?></pre></td>
-						</tr>
-						<tr>
-							<th scope="row">Response body</th>
-							<td scope="row"><pre class="text-sm"><?php dump($worker->lastRequestLog->response_body) ?></pre></td>
-						</tr>
-						<tr>
-							<th scope="row">HTTP code</th>
-							<td scope="row"><pre class="text-sm">{{ $worker->lastRequestLog->http_code }}</pre></td>
-						</tr>
-					</tbody>
-				</table>
-			@endif
+
 		</div>
 	</div>
 @endsection

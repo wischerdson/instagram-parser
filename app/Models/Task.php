@@ -50,6 +50,11 @@ class Task extends Model
 		$this->type = self::TYPE_USER_INFO_FETCHING;
 	}
 
+	public function setUnprocessedStatus(): void
+	{
+		$this->status = self::STATUS_UNPROCESSED;
+	}
+
 	public function setInProcessStatus(): void
 	{
 		$this->status = self::STATUS_IN_PROCESS;

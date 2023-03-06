@@ -17,7 +17,7 @@ class WorkerController extends Controller
 	public function edit(int $workerId)
 	{
 		$worker = Worker::findOrFail($workerId);
-		$worker->load('lastRequestLog');
+		// $worker->loadMissing('lastRequestLog');
 
 		return view('pages.workers.edit', ['worker' => $worker]);
 	}
@@ -72,14 +72,14 @@ class WorkerController extends Controller
 			);
 		}
 
-		return redirect()->to('/workers');
+		return redirect()->to('/');
 	}
 
 	public function delete(int $id)
 	{
 		Worker::destroy($id);
 
-		return redirect()->back();
+		return redirect()->to('/');
 	}
 
 	public function healthcheck(int $id)

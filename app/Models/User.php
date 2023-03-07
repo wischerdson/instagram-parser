@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Contracts\TaskResult;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 /**
@@ -38,5 +39,10 @@ class User extends Model implements TaskResult
 	public function task(): MorphOne
 	{
 		return $this->morphOne(Task::class, 'result');
+	}
+
+	public function crawled(): HasOne
+	{
+		return $this->hasOne(CrawledUser::class, 'ig_pk', 'pk');
 	}
 }

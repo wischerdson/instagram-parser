@@ -33,13 +33,28 @@ abstract class TaskProcessor
 			$request->useProxy(new Proxy($this->worker->proxy));
 		}
 
+		/** Если нет обстоятельств, которые не разрешат выполнить запрос */
 		if ($this->beforeRequestSend()) {
 			$response = $request->send();
 
 			RequestLogger::log($this->worker, $request, $response->httpResponse, $this->task);
 
+			/** Если произошло что-то не по плану */
 			if ($response->isSomethingWrong()) {
-				if (!($json = $response->httpResponse->json()) || $json['message'] !== 'Target user not found') {
+				/** Если запрос вообще не удалось отправить */
+				if (!$response->httpResponse) {
+					$this->worker->pause();
+
+					$this->task->setUnprocessedStatus();
+					$this->task->save();
+
+					return false;
+				}
+
+				if (
+					!($json = $response->httpResponse->json()) ||
+					$json['message'] !== 'Target user not found'
+				) {
 					$this->task->setFailedStatus();
 					$this->task->save();
 
@@ -64,9 +79,13 @@ abstract class TaskProcessor
 		return true;
 	}
 
+	/**
+	 * Проверка, можно ли отправить текущий запрос.
+	 * Этот метод могут переопределить потомки и изменить поведение
+	 */
 	protected function beforeRequestSend(): bool
 	{
-		return true;
+		return $this->worker->status === Worker::STATUS_BUSY;
 	}
 
 	abstract protected function getRequest(): Request;

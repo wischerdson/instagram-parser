@@ -55,6 +55,8 @@
 						<td class="whitespace-nowrap">
 							@if ($worker->status === \App\Models\Worker::STATUS_INACTIVE)
 								<div class="inline-block w-2 h-2 rounded-full bg-red-500"></div>
+							@elseif ($worker->status === \App\Models\Worker::STATUS_PAUSE)
+								<div class="inline-block w-2 h-2 rounded-full bg-amber-500"></div>
 							@else
 								<div class="inline-block w-2 h-2 rounded-full bg-green-500"></div>
 							@endif

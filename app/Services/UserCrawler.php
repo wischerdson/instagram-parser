@@ -2,54 +2,89 @@
 
 namespace App\Services;
 
+use App\Models\CrawledUser;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Validator;
+use libphonenumber\PhoneNumber;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\PhoneNumberUtil;
 
 class UserCrawler
 {
 	private readonly User $user;
 
-	private readonly ?string $phone;
+	private readonly PhoneNumberUtil $phoneUtil;
+
+	private readonly ?PhoneNumber $phone;
 
 	private readonly ?string $email;
 
 	public function __construct(User $user)
 	{
 		$this->user = $user;
-		$this->phone = $this->tryToFetchPhone();
+		$this->phoneUtil = PhoneNumberUtil::getInstance();
+		$this->phone = (new UserPhoneCrawler($this->phoneUtil, $user))->getPhone();
 		$this->email = $this->getEmail();
 	}
 
-	public function tryToFetchPhone(): ?string
+	public static function run(): void
 	{
-		if ($this->user->public_phone_number && $this->user->public_phone_country_code) {
-			return $this->user->public_phone_country_code . $this->user->public_phone_number;
-		}
+		$total = 0;
 
-		if ($this->user->whatsapp_number) {
-			return $this->user->whatsapp_number;
-		}
+		User::doesntHave('crawled')->chunkById(1000, function (Collection $users) use (&$total) {
+			$crawled = $users->map(function (User $user) {
+				$crawler = new self($user);
+				return ($model = $crawler->getFilledModel()) ? $model->toArray() : null;
+			})->filter();
 
-		if ($this->user->contact_phone_number) {
-			return $this->user->contact_phone_number;
-		}
+			$total += $crawled->count();
 
-		if ($phone = $this->findPhone($this->user->bio)) {
-			return $phone;
-		}
+			CrawledUser::upsert($crawled->toArray(), ['phone']);
+		});
 
-		if ($phone = $this->findPhone($this->user->external_url)) {
-			return $phone;
-		}
-
-		if ($phone = $this->findPhone($this->user->address_street)) {
-			return $phone;
-		}
-
-		return null;
+		dump('Total crawled: ' . $total);
 	}
 
-	public function getEmail(): ?string
+	public function getFilledModel(): ?CrawledUser
+	{
+		$email = $this->email;
+		$phone = $this->phone;
+
+		if (!$email && !$phone) {
+			return null;
+		}
+
+		$user = $this->user;
+
+		$crawled = new CrawledUser();
+		$crawled->ig_pk = $user->pk;
+		$crawled->ig_username = $user->username;
+		$crawled->ig_full_name = $user->full_name ?: null;
+		$crawled->ig_biography = $user->biography ?: null;
+		$crawled->ig_category = $user->category ?: null;
+		$crawled->city = $user->city_name ?: null;
+		$crawled->email = $email;
+		$crawled->is_business = $user->is_business;
+
+		if (!$phone) {
+			$crawled->phone = null;
+			$crawled->phone_country_code = null;
+			$crawled->phone_national_number = null;
+			$crawled->phone_region_code = null;
+
+			return $crawled;
+		}
+
+		$crawled->phone = $this->phoneUtil->format($this->phone, PhoneNumberFormat::E164);
+		$crawled->phone_country_code = $this->phone->getCountryCode();
+		$crawled->phone_national_number = $this->phone->getNationalNumber();
+		$crawled->phone_region_code = $this->phoneUtil->getRegionCodeForNumber($this->phone);
+
+		return $crawled;
+	}
+
+	private function getEmail(): ?string
 	{
 		if (!($email = $this->user->public_email)) {
 			return null;
@@ -60,24 +95,5 @@ class UserCrawler
 		}
 
 		return mb_strtolower($email);
-	}
-
-	private function findPhone(string $string): ?string
-	{
-		preg_match('/(^|\D)(\+|8)[\s\d()-_]+/i', $string, $matches);
-
-		if (!isset($matches[0])) {
-			return null;
-		}
-
-		return $this->normalizePhone($matches[0]);
-	}
-
-	private function normalizePhone(string $dirtyPhone): string
-	{
-		$phone = preg_replace('/\D/', '', $dirtyPhone);
-		$phone = preg_replace('/^8/', '7', $dirtyPhone);
-
-		return $phone;
 	}
 }

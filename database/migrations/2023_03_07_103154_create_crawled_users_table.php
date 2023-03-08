@@ -14,8 +14,8 @@ return new class extends Migration
 		Schema::create('crawled_users', function (Blueprint $table) {
 			$table->id();
 			$table->string('ig_pk')->unique();
-			$table->string('ig_login')->unique();
-			$table->string('ig_full_name');
+			$table->string('ig_username')->unique();
+			$table->string('ig_full_name')->nullable();
 			$table->string('ig_biography')->nullable();
 			$table->string('ig_category')->nullable();
 			$table->string('city')->nullable();

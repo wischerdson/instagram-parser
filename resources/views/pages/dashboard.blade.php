@@ -60,7 +60,6 @@
 							@else
 								<div class="inline-block w-2 h-2 rounded-full bg-green-500"></div>
 							@endif
-
 							<span><b>{{ $worker->login }}</b>:{{ $worker->password }}</span>
 						</td>
 						<td>{{ $worker->today_tasks_count }}</td>

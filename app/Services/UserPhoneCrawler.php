@@ -30,21 +30,25 @@ class UserPhoneCrawler
 	{
 		$phone = $this->tryToFetchPhone();
 
-		return $phone ? $this->phoneUtil->parse($phone, 'RU') : null;
+		try {
+			return $this->phoneUtil->parse($phone, 'RU');
+		} catch (\Exception $e) {
+			return null;
+		}
 	}
 
 	private function tryToFetchPhone(): ?string
 	{
+		if ($this->user->contact_phone_number) {
+			return $this->user->contact_phone_number;
+		}
+
 		if ($this->user->public_phone_number && $this->user->public_phone_country_code) {
-			return $this->user->public_phone_country_code . $this->user->public_phone_number;
+			return '+' . $this->user->public_phone_country_code . $this->user->public_phone_number;
 		}
 
 		if ($this->user->whatsapp_number) {
 			return $this->user->whatsapp_number;
-		}
-
-		if ($this->user->contact_phone_number) {
-			return $this->user->contact_phone_number;
 		}
 
 		if ($phone = $this->recognizePhone($this->user->bio)) {
